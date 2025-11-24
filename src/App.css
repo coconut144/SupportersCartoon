@@ -1,3 +1,37 @@
+.artist-list {
+  display: flex;
+  gap: 2rem;
+  justify-content: center;
+  margin-top: 1.5rem;
+}
+
+.artist-card {
+  background: #f7f7fa;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(78,84,200,0.08);
+  padding: 1rem;
+  text-align: center;
+  width: 160px;
+}
+
+.artist-img {
+  width: 100px;
+  height: 100px;
+  object-fit: cover;
+  border-radius: 50%;
+  margin-bottom: 0.5rem;
+}
+
+.artist-card h3 {
+  margin: 0.5rem 0 0.5rem 0;
+  color: #4e54c8;
+}
+
+.artist-card a {
+  color: #8f94fb;
+  text-decoration: none;
+  font-weight: bold;
+}
 .App {
   text-align: center;
 }
@@ -13,15 +47,37 @@
   }
 }
 
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
+
+.main-header {
+  background: linear-gradient(90deg, #4e54c8, #8f94fb);
+  color: #fff;
+  padding: 2rem 0 1rem 0;
+  text-align: center;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+}
+
+.section {
+  background: #fff;
+  margin: 2rem auto;
+  max-width: 600px;
+  border-radius: 16px;
+  box-shadow: 0 2px 16px rgba(78,84,200,0.08);
+  padding: 2rem;
+  text-align: left;
+}
+
+.section h2 {
+  color: #4e54c8;
+  margin-bottom: 1rem;
+}
+
+.section ul {
+  padding-left: 1.5rem;
+}
+
+.section li {
+  margin-bottom: 0.5rem;
+  font-size: 1.1rem;
 }
 
 .App-link {
