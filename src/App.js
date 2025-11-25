@@ -1,6 +1,7 @@
 
 import './App.css';
 import Artist from './Artist';
+import Contact from './contact';
 import Event from './Event';
 import Work from './Work';
 
@@ -13,8 +14,13 @@ function App() {
       </header>
       <main>
         <Artist />
+        <Contact />
         <Event />
         <Work />
+        {/* <div className="event-work-row">
+          <Event />
+          <Work />
+        </div> */}
       </main>
     </div>
   );
