@@ -1,0 +1,35 @@
+/* สไตล์สำหรับหน้า Artist */
+.artist-list {
+  display: flex;
+  gap: 2rem;
+  justify-content: center;
+  margin-top: 1.5rem;
+}
+
+.artist-card {
+  background: #f7f7fa;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(78,84,200,0.08);
+  padding: 1rem;
+  text-align: center;
+  width: 160px;
+}
+
+.artist-img {
+  width: 100px;
+  height: 100px;
+  object-fit: cover;
+  border-radius: 50%;
+  margin-bottom: 0.5rem;
+}
+
+.artist-card h3 {
+  margin: 0.5rem 0 0.5rem 0;
+  color: #4e54c8;
+}
+
+.artist-card a {
+  color: #8f94fb;
+  text-decoration: none;
+  font-weight: bold;
+}

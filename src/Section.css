@@ -1,0 +1,24 @@
+/* สไตล์สำหรับ section หลักที่ใช้ร่วมกัน */
+.section {
+  background: #fff;
+  margin: 2rem auto;
+  max-width: 600px;
+  border-radius: 16px;
+  box-shadow: 0 2px 16px rgba(78,84,200,0.08);
+  padding: 2rem;
+  text-align: left;
+}
+
+.section h2 {
+  color: #4e54c8;
+  margin-bottom: 1rem;
+}
+
+.section ul {
+  padding-left: 1.5rem;
+}
+
+.section li {
+  margin-bottom: 0.5rem;
+  font-size: 1.1rem;
+}

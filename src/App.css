@@ -1,167 +1,86 @@
-
-/* YouTube video grid for Work.js */
-/* .work-videos-grid {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 1.5rem;
+/* ป้องกันการเกิด scrollbar ด้านล่าง */
+html, body, #root {
+  overflow-x: hidden;
   width: 100%;
-  max-width: 900px;
-  margin: 0 auto;
+  margin: 0;
+  padding: 0;
 }
 
-@media (min-width: 600px) {
-  .work-videos-grid {
-    grid-template-columns: 1fr 1fr;
-  }
-} */
- .work-videos-grid {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 1.5rem;
+/* ================== Navbar ================== */
+
+.navbar {
   width: 100%;
-}
-
-@media (min-width: 600px) {
-  .work-videos-grid {
-    grid-template-columns: 1fr 1fr;
-  }
-}
-
-@media (min-width: 1024px) {
-  .work-videos-grid {
-    grid-template-columns: 1fr 1fr 1fr;
-  }
-}
-
-.work-video-card {
-  aspect-ratio: 16/9;
-  border-radius: 18px;
-  overflow: hidden;
-  box-shadow: 0 4px 16px rgba(78,84,200,0.12);
+  padding: 1.2rem 0;
   background: #fff;
-  transition: transform 0.2s, box-shadow 0.2s;
-}
-
-.work-video-card:hover {
-  transform: translateY(-4px) scale(1.03);
-  box-shadow: 0 8px 24px rgba(78,84,200,0.18);
-}
-
-.work-video-card iframe {
-  width: 100%;
-  height: 100%;
-  border: none;
-}
-
-
-/* .work-video-card {
-  aspect-ratio: 16/9;
-  border-radius: 18px;
-  overflow: hidden;
-  box-shadow: 0 4px 16px rgba(78,84,200,0.12);
-  background: #fff;
-  transition: transform 0.2s, box-shadow 0.2s;
-}
-.work-video-card:hover {
-  transform: translateY(-4px) scale(1.03);
-  box-shadow: 0 8px 24px rgba(78,84,200,0.18);
-}
-.work-video-card iframe {
-  width: 100%;
-  height: 100%;
-  border: none;
-  display: block;
-} */
-
-.event-work-row {
+  box-shadow: 0 4px 12px rgba(78,84,200,0.06);
   display: flex;
-  gap: 2rem;
   justify-content: center;
-  align-items: stretch;
-  margin-top: 2rem;
+  gap: 3rem;
+  position: sticky;
+  top: 0;
+  z-index: 999;
 }
 
-.event-work-row .section {
-  flex: 1 1 0;
-  max-width: 350px;
-  min-width: 220px;
-  box-sizing: border-box;
-  height: 100%;
-  display: flex;
-  flex-direction: column;
+.navbar-logo {
+  width: 90px;
 }
 
-@media (max-width: 800px) {
-  .event-work-row {
-    flex-direction: column;
-    gap: 1rem;
-  }
-  .event-work-row .section {
-    max-width: 100%;
-    min-width: 0;
-    height: auto;
-  }
+.navbar a {
+  text-decoration: none;
+  font-weight: bold;
+  font-size: 1.1rem;
+  color: #4e54c8;
+  padding-bottom: 4px;
+  transition: color 0.2s;
 }
 
-@media (max-width: 600px) {
-  .main-header {
-    font-size: 1.2rem;
-    padding: 1rem 0 0.5rem 0;
-  }
-  /* .section {
-    padding: 1rem;
-    font-size: 1rem;
-    border-radius: 8px;
-  } */
-   .section {
-  width: 100%;
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 4rem 1rem;
+/* ขีดเส้นใต้เฉพาะเมนูที่ active */
+.navbar a.active {
+  border-bottom: 3px solid #4e54c8;
+  padding-bottom: 6px;
+  color: #4e54c8;
 }
 
-  .artist-list {
-    flex-direction: column;
-    gap: 1rem;
-  }
-  .artist-card {
-    width: 100%;
-    min-width: 0;
-    padding: 0.5rem;
-  }
-  .artist-img {
-    width: 80px;
-    height: 80px;
-  }
+/* Hover */
+.navbar a:hover {
+  color: #8f94fb;
 }
 
-@media (min-width: 601px) and (max-width: 1024px) {
-  .main-header {
-    font-size: 1.5rem;
-    padding: 1.5rem 0 1rem 0;
-  }
-  .section {
-    padding: 1.5rem;
-    font-size: 1.1rem;
-    border-radius: 12px;
-  }
-  .event-work-row {
-    gap: 1.2rem;
-  }
-  .artist-card {
-    width: 140px;
-  }
-  .artist-img {
-    width: 90px;
-    height: 90px;
-  }
+/* ================== Section Style ================== */
+
+.section {
+  background: #fff;
+  margin: 2rem auto;
+  max-width: 600px;
+  border-radius: 16px;
+  box-shadow: 0 2px 16px rgba(78,84,200,0.08);
+  padding: 2rem;
+  text-align: left;
 }
-/* ปิด media query ตรงนี้ */
+
+/* Header text */
+.section h2 {
+  color: #4e54c8;
+  margin-bottom: 1rem;
+}
+
+.section ul {
+  padding-left: 1.5rem;
+}
+
+.section li {
+  margin-bottom: 0.5rem;
+  font-size: 1.1rem;
+}
+
+/* ================== Artist Cards ================== */
+
 .artist-list {
   display: flex;
   gap: 2rem;
   justify-content: center;
   margin-top: 1.5rem;
+  flex-wrap: wrap;
 }
 
 .artist-card {
@@ -182,7 +101,7 @@
 }
 
 .artist-card h3 {
-  margin: 0.5rem 0 0.5rem 0;
+  margin: 0.5rem 0;
   color: #4e54c8;
 }
 
@@ -191,63 +110,22 @@
   text-decoration: none;
   font-weight: bold;
 }
-.App {
-  text-align: center;
-}
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
-}
+/* ================== Responsive ================== */
 
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
+@media (min-width: 601px) and (max-width: 1024px) {
+  .section {
+    padding: 1.5rem;
+    font-size: 1.1rem;
+    border-radius: 12px;
   }
-}
 
-
-.main-header {
-  background: linear-gradient(90deg, #4e54c8, #8f94fb);
-  color: #fff;
-  padding: 2rem 0 1rem 0;
-  text-align: center;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-}
-
-.section {
-  background: #fff;
-  margin: 2rem auto;
-  max-width: 600px;
-  border-radius: 16px;
-  box-shadow: 0 2px 16px rgba(78,84,200,0.08);
-  padding: 2rem;
-  text-align: left;
-}
-
-.section h2 {
-  color: #4e54c8;
-  margin-bottom: 1rem;
-}
-
-.section ul {
-  padding-left: 1.5rem;
-}
-
-.section li {
-  margin-bottom: 0.5rem;
-  font-size: 1.1rem;
-}
-
-.App-link {
-  color: #61dafb;
-}
-
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
+  .artist-card {
+    width: 140px;
   }
-  to {
-    transform: rotate(360deg);
+
+  .artist-img {
+    width: 90px;
+    height: 90px;
   }
 }

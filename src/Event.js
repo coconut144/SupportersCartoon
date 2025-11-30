@@ -1,3 +1,6 @@
+
+import './Section.css';
+import './Event.css';
 import React from 'react';
 
 function Event() {

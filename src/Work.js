@@ -1,3 +1,6 @@
+
+import './Section.css';
+import './Work.css';
 import React from 'react';
 
 function Work() {
@@ -10,37 +13,22 @@ function Work() {
   ];
 
   return (
-    <section
-  className="section"
-  style={{
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-    gap: '1.5rem',
-    padding: '4rem 1rem',
-    width: '100%',
-    maxWidth: '1200px',
-    margin: '0 auto'
-  }}
->
-  <h2 style={{ fontSize: '2rem', fontWeight: 'bold', textAlign: 'center' }}>
-    Debut Stage
-  </h2>
+    <section className="section work-section">
+      <h2 className="work-title">Debut Stage</h2>
 
-  <div className="work-videos-grid">
-    {videos.map((url, index) => (
-      <div key={index} className="work-video-card">
-        <iframe
-          src={url}
-          title={`YouTube video ${index + 1}`}
-          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-          allowFullScreen
-        ></iframe>
+      <div className="work-videos-grid">
+        {videos.map((url, index) => (
+          <div key={index} className="work-video-card">
+            <iframe
+              src={url}
+              title={`YouTube video ${index + 1}`}
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              allowFullScreen
+            ></iframe>
+          </div>
+        ))}
       </div>
-    ))}
-  </div>
-</section>
-
+    </section>
   );
 }
 

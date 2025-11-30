@@ -1,0 +1,97 @@
+/* ===== NAVBAR แบบโปร พร้อมโลโก้ ===== */
+
+.main-header {
+  width: 100%;
+  background: #ffffff;
+
+  /* ป้องกันไม่ให้ตกขอบ */
+  padding: 0.9rem clamp(1rem, 4vw, 3rem);
+
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  border-radius: 12px;
+  box-shadow: 0 4px 18px rgba(0,0,0,0.08);
+
+  position: sticky;
+  top: 0;
+  z-index: 100;
+
+  /* กันล้น */
+  box-sizing: border-box;
+  overflow-x: hidden;
+}
+
+/* LOGO */
+.logo-box {
+  display: flex;
+  align-items: center;
+}
+
+.logo-img {
+  height: 40px;
+  width: auto;
+}
+
+/* NAV LINKS */
+.main-nav {
+  display: flex;
+  align-items: center;
+  gap: clamp(0.5rem, 1.2vw, 1.5rem); /* กันไม่ให้เมนูเบียดหรือห่างเกิน */
+  flex-wrap: wrap; /* ป้องกันเมนูล้น */
+}
+
+/* Remove ALL underline, borders, focus rings */
+.main-nav .nav-link {
+  color: #222;
+  font-size: 1rem;
+  font-weight: 500;
+  font-family: 'Prompt', 'Kanit', sans-serif;
+
+  padding: 0.45rem 0.9rem;
+  border-radius: 10px;
+
+  text-decoration: none !important;
+  border: none !important;
+  outline: none !important;
+  -webkit-focus-ring-color: transparent !important;
+  -webkit-tap-highlight-color: transparent;
+
+  transition: 0.25s ease;
+
+  /* ป้องกันเมนูล้น */
+  white-space: nowrap;
+}
+
+/* Hover */
+.main-nav .nav-link:hover {
+  background: rgba(110, 99, 255, 0.08);
+  color: #4e54c8;
+}
+
+/* ACTIVE */
+.main-nav .nav-link.active {
+  background: rgba(110, 99, 255, 0.15);
+  color: #4e54c8;
+  font-weight: 600;
+  border-radius: 10px;
+}
+
+/* MOBILE */
+@media (max-width: 750px) {
+  .main-header {
+    flex-direction: column;
+    gap: 0.7rem;
+    padding: 1rem 1rem;
+  }
+
+  .main-nav {
+    justify-content: center;
+    gap: 0.7rem;
+  }
+
+  .logo-img {
+    height: 32px;
+  }
+}

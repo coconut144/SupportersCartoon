@@ -1,3 +1,6 @@
+
+import './Section.css';
+import './Artist.css';
 import React from 'react';
 
 function Artist() {

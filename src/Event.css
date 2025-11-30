@@ -1,0 +1,30 @@
+/* สไตล์สำหรับหน้า Event */
+.event-work-row {
+  display: flex;
+  gap: 2rem;
+  justify-content: center;
+  align-items: stretch;
+  margin-top: 2rem;
+}
+
+.event-work-row .section {
+  flex: 1 1 0;
+  max-width: 350px;
+  min-width: 220px;
+  box-sizing: border-box;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+@media (max-width: 800px) {
+  .event-work-row {
+    flex-direction: column;
+    gap: 1rem;
+  }
+  .event-work-row .section {
+    max-width: 100%;
+    min-width: 0;
+    height: auto;
+  }
+}
