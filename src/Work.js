@@ -1,4 +1,3 @@
-
 import './Section.css';
 import './Work.css';
 import React from 'react';
@@ -14,19 +13,21 @@ function Work() {
 
   return (
     <section className="section work-section">
-      <h2 className="work-title">Debut Stage</h2>
+      <div className="work-inner">
+        <h2 className="work-title">Debut Stage</h2>
 
-      <div className="work-videos-grid">
-        {videos.map((url, index) => (
-          <div key={index} className="work-video-card">
-            <iframe
-              src={url}
-              title={`YouTube video ${index + 1}`}
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-              allowFullScreen
-            ></iframe>
-          </div>
-        ))}
+        <div className="work-videos-grid">
+          {videos.map((url, index) => (
+            <div key={index} className="work-video-card">
+              <iframe
+                src={url}
+                title={`YouTube video ${index + 1}`}
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowFullScreen
+              ></iframe>
+            </div>
+          ))}
+        </div>
       </div>
     </section>
   );
