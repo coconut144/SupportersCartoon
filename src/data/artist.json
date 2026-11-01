@@ -1,0 +1,23 @@
+{
+  "nickname": "Cartoon",
+  "group": "BNK48",
+  "nameTh": "ณัฏฐธิดา ณ อัมภัย",
+  "nameEn": "Natthathida Na Amphai",
+  "birthDate": "2009-08-26",
+  "bloodGroup": "AB",
+  "heightCm": 161,
+  "province": "ศรีสะเกษ",
+  "likes": [
+    "แมว",
+    "กระต่าย",
+    "แพนด้าแดง",
+    "ก๋วยเตี๋ยวน้ำตกไม่ผัก"
+  ],
+  "hobbies": [
+    "อ่านนิยาย",
+    "ร้องเพลง",
+    "ดูอะนิเมะ",
+    "เล่นเกม"
+  ],
+  "image": "/images/18813.jpg"
+}

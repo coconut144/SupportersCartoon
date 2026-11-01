@@ -2,13 +2,12 @@
 
 import './App.css';
 import './Header.css';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate, NavLink, Link } from 'react-router-dom';
 import Home from './Home';
-import Contact from './contact';
-import Artist from './Artist';
 import Event from './Event';
 import Work from './Work';
-import { NavLink } from 'react-router-dom';
+import Support from './Support';
+import Footer from './Footer';
 
 
 function App() {
@@ -16,16 +15,13 @@ function App() {
     <Router>
       <div className="App">
         <header className="main-header">
-  <div className="logo-box">
-    <img src="/images/18813.jpg" alt="Logo" className="logo-img" />
-  </div>
+  <Link to="/" className="site-name">Cartoon</Link>
 
   <nav className="main-nav">
     <NavLink to="/" end className={({ isActive }) => isActive ? "nav-link active" : "nav-link"}>หน้าหลัก</NavLink>
-    <NavLink to="/artist" className={({ isActive }) => isActive ? "nav-link active" : "nav-link"}>ศิลปิน</NavLink>
     <NavLink to="/event" className={({ isActive }) => isActive ? "nav-link active" : "nav-link"}>กิจกรรม</NavLink>
     <NavLink to="/work" className={({ isActive }) => isActive ? "nav-link active" : "nav-link"}>ผลงาน</NavLink>
-    <NavLink to="/contact" className={({ isActive }) => isActive ? "nav-link active" : "nav-link"}>ช่องทางการติดตาม</NavLink>
+    <NavLink to="/support" className={({ isActive }) => isActive ? "nav-link active" : "nav-link"}>ซัพพอร์ต</NavLink>
   </nav>
 </header>
 
@@ -33,12 +29,16 @@ function App() {
         <main>
           <Routes>
             <Route path="/" element={<Home />} />
-            <Route path="/artist" element={<Artist />} />
             <Route path="/event" element={<Event />} />
             <Route path="/work" element={<Work />} />
-            <Route path="/contact" element={<Contact />} />
+            <Route path="/support" element={<Support />} />
+            {/* หน้าเดิมที่ถูกรวมเข้าหน้าหลักและ footer แล้ว เก็บไว้ไม่ให้ลิงก์เก่าเสีย */}
+            <Route path="/artist" element={<Navigate to="/" replace />} />
+            <Route path="/contact" element={<Navigate to="/" replace />} />
           </Routes>
         </main>
+
+        <Footer />
       </div>
     </Router>
   );

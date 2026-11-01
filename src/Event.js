@@ -1,17 +1,23 @@
 import './Section.css';
 import './Event.css';
 import React from 'react';
+import events from './data/events.json';
+import { formatDate } from './data/format';
 
 function Event() {
   return (
     <section className="section">
-      <div className="section-inner">
-        <h2>งานอีเว้นท์</h2>
-        <ul>
-          <li>Event 1: วันที่ 1 ธ.ค. 2025</li>
-          <li>Event 2: วันที่ 10 ธ.ค. 2025</li>
-        </ul>
-      </div>
+      <h1 className="section-title">กิจกรรม</h1>
+      <p className="section-lead">งานอีเวนต์ที่น้องการ์ตูนไปร่วม</p>
+
+      <ol className="event-list">
+        {events.map((event) => (
+          <li key={`${event.date}-${event.title}`}>
+            <time dateTime={event.date}>{formatDate(event.date, 'th-TH')}</time>
+            <span>{event.title}</span>
+          </li>
+        ))}
+      </ol>
     </section>
   );
 }

@@ -5,10 +5,14 @@ html, body, #root {
   padding: 0;
 }
 
+/* ให้ footer อยู่ขอบล่างของจอเสมอ แม้หน้าที่เนื้อหาสั้น */
 .App {
+  display: flex;
+  flex-direction: column;
   min-height: 100vh;
 }
 
 main {
+  flex: 1 0 auto;
   width: 100%;
 }

@@ -1,30 +1,27 @@
 /* สไตล์สำหรับหน้า Event */
-.event-work-row {
-  display: flex;
-  gap: 2rem;
-  justify-content: center;
-  align-items: stretch;
-  margin-top: 2rem;
+.event-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  border-top: 1px solid var(--line);
 }
 
-.event-work-row .section {
-  flex: 1 1 0;
-  max-width: 350px;
-  min-width: 220px;
-  box-sizing: border-box;
-  height: 100%;
-  display: flex;
-  flex-direction: column;
+.event-list li {
+  display: grid;
+  grid-template-columns: 9rem 1fr;
+  gap: 1rem;
+  padding: 1rem 0;
+  border-bottom: 1px dashed var(--line);
 }
 
-@media (max-width: 800px) {
-  .event-work-row {
-    flex-direction: column;
-    gap: 1rem;
-  }
-  .event-work-row .section {
-    max-width: 100%;
-    min-width: 0;
-    height: auto;
+.event-list time {
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+}
+
+@media (max-width: 480px) {
+  .event-list li {
+    grid-template-columns: 1fr;
+    gap: 0.1rem;
   }
 }
