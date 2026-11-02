@@ -1,6 +1,21 @@
-{
-  "title": "JOIN OPC",
-  "description": "เข้ากลุ่ม LINE OpenChat ของแฟนคลับ",
-  "qr": "/images/support/qr-opc.png",
-  "url": ""
-}
+[
+  {
+    "title": "JOIN OPC",
+    "description": "เข้ากลุ่ม LINE OpenChat ของแฟนคลับ",
+    "qr": "/images/support/qr-opc.png",
+    "url": "https://line.me/ti/g2/4oIr2-pjEx-Ld8kV3vREQMjyuy1YSDUCKvt6ZA",
+    "label": "เข้ากลุ่มใน LINE"
+  },
+  {
+    "title": "TIKTOK",
+    "description": "ติดตาม TikTok ของแฟนคลับ @cartoonbnk48thfc",
+    "url": "https://www.tiktok.com/@cartoonbnk48thfc",
+    "label": "ไปที่ TikTok"
+  },
+  {
+    "title": "X",
+    "description": "ติดตาม X ของแฟนคลับ @cartoonbnk_thfc",
+    "url": "https://x.com/cartoonbnk_thfc",
+    "label": "ไปที่ X"
+  }
+]

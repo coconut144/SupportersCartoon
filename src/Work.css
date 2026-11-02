@@ -1,4 +1,32 @@
 /* สไตล์สำหรับหน้า Work */
+.work-category + .work-category {
+  margin-top: 2.5rem;
+}
+
+.work-category-title {
+  margin: 0 0 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid var(--line);
+  font-family: var(--serif);
+  font-size: 1.4rem;
+  font-weight: 700;
+}
+
+.work-video {
+  margin: 0;
+}
+
+.work-video figcaption {
+  margin-top: 0.5rem;
+  font-size: 0.95rem;
+}
+
+.work-video time {
+  display: block;
+  color: var(--muted);
+  font-size: 0.85rem;
+}
+
 .work-videos-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));

@@ -1,18 +1,6 @@
-/* โครงหน้าย่อยที่ใช้ร่วมกัน (กิจกรรม, ผลงาน) */
+/* โครงหน้าย่อยที่ใช้ร่วมกัน (กิจกรรม, ผลงาน, ซัพพอร์ต) */
 .section {
   max-width: 1080px;
   margin: 0 auto;
   padding: clamp(2rem, 5vw, 3.5rem) clamp(1rem, 4vw, 3rem) 3rem;
-}
-
-.section-title {
-  margin: 0 0 0.3rem;
-  font-family: var(--serif);
-  font-size: clamp(1.8rem, 4vw, 2.4rem);
-  font-weight: 700;
-}
-
-.section-lead {
-  margin: 0 0 2rem;
-  color: var(--muted);
 }

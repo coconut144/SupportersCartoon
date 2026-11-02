@@ -1,10 +1,107 @@
 {
-  "title": "Debut Stage",
-  "items": [
-    "https://www.youtube.com/embed/jRVOQHriw2w?si=VuBEUWPB3s5F92L6",
-    "https://www.youtube.com/embed/CDSCbCJRdQM?si=gLagKQoCGwl9NaUN",
-    "https://www.youtube.com/embed/9kKtPML_8Zs?si=4fEXohPOYT9Kvivy",
-    "https://www.youtube.com/embed/nJNxYPgJ8_A?si=J3LiMRVPbutQsMjG",
-    "https://www.youtube.com/embed/EC0JdxudDzk?si=DihZliO3uy73W935"
+  "categories": [
+    {
+      "title": "Highlight",
+      "items": [
+        {
+          "title": "วันติสท์ ๆ ของ Cartoon เปิดประสบการณ์สัมผัสงานศิลป์",
+          "url": "https://www.youtube.com/embed/QiQkGEa_f7Q"
+        },
+        {
+          "title": "THEN and NOW: Self-Reflection",
+          "url": "https://www.youtube.com/embed/glDUpDkkALc"
+        }
+      ]
+    },
+    {
+      "title": "Music Video",
+      "items": [
+        {
+          "title": "จะยังไงก็รักเธอ (MV full)",
+          "url": "https://www.youtube.com/embed/jRVOQHriw2w?si=VuBEUWPB3s5F92L6"
+        },
+        {
+          "title": "จะยังไงก็รักเธอ (The Making of)",
+          "url": "https://www.youtube.com/embed/nJNxYPgJ8_A?si=J3LiMRVPbutQsMjG"
+        }
+      ]
+    },
+    {
+      "title": "Performance",
+      "sort": "newest",
+      "items": [
+        {
+          "title": "เรียกชื่อที ใจไม่ดีแล้ว! (Dance Performance ver.)",
+          "date": "2026-11-01",
+          "url": "https://www.youtube.com/embed/Mudj0MeynEk"
+        },
+        {
+          "title": "เรียกชื่อที ใจไม่ดีแล้ว! (Fan Festival 2026)",
+          "date": "2026-10-06",
+          "url": "https://www.youtube.com/embed/V-LabrlZHIc"
+        },
+        {
+          "title": "จะยังไงก็รักเธอ (Sports Day 2026)",
+          "date": "2026-02-23",
+          "url": "https://www.youtube.com/embed/kRVKkfsFjkY"
+        },
+        {
+          "title": "จะยังไงก็รักเธอ (One-Shot Challenge)",
+          "date": "2026-01-19",
+          "url": "https://www.youtube.com/embed/UsUakTRMFuc"
+        },
+        {
+          "title": "จะยังไงก็รักเธอ (BNK48 20th Single First Performance)",
+          "date": "2025-11-05",
+          "url": "https://www.youtube.com/embed/GkKwugh9HN4"
+        },
+        {
+          "title": "จะยังไงก็รักเธอ (Dance Version)",
+          "date": "2025-11-01",
+          "url": "https://www.youtube.com/embed/CDSCbCJRdQM?si=gLagKQoCGwl9NaUN"
+        },
+        {
+          "title": "จะยังไงก็รักเธอ (Blind Dance Challenge)",
+          "date": "2025-10-27",
+          "url": "https://www.youtube.com/embed/EC0JdxudDzk?si=DihZliO3uy73W935"
+        },
+        {
+          "title": "จะยังไงก็รักเธอ (Dance Practice)",
+          "date": "2025-10-19",
+          "url": "https://www.youtube.com/embed/9kKtPML_8Zs?si=4fEXohPOYT9Kvivy"
+        }
+      ]
+    },
+    {
+      "title": "Variety",
+      "sort": "newest",
+      "items": [
+        {
+          "title": "ดูออกนะคะ EP.49 ดูเดือดนะคะ (ดูปากนะคะ)",
+          "date": "2026-08-02",
+          "url": "https://www.youtube.com/embed/JgOvakd8Mk8"
+        },
+        {
+          "title": "ดูออกนะคะ EP.47 คำต้องห้ามที่เหมือนไม่ได้ห้าม…!? (คำต้องห้าม)",
+          "date": "2026-07-05",
+          "url": "https://www.youtube.com/embed/FhsRrTzHgtg"
+        },
+        {
+          "title": "ดูออกนะคะ EP.43 คืนนี้…พี่เฝ้าเอง (Five Nights at Freddy’s)",
+          "date": "2026-05-24",
+          "url": "https://www.youtube.com/embed/C3lx7y92SqM"
+        },
+        {
+          "title": "ดูออกนะคะ EP.23 พี่ขอร้อง น้องอย่าเหลี่ยม! (The Resistance: Avalon)",
+          "date": "2025-10-19",
+          "url": "https://www.youtube.com/embed/lWxC-pkQ6M0"
+        },
+        {
+          "title": "ดูออกนะคะ EP.16 ทุกคนหลับตา… เช้านี้มีคนตาย!! (Ultimate Werewolf)",
+          "date": "2025-06-29",
+          "url": "https://www.youtube.com/embed/IaNWqStiFqM"
+        }
+      ]
+    }
   ]
 }

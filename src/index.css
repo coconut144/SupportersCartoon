@@ -32,6 +32,19 @@ a:focus-visible {
   outline-offset: 3px;
 }
 
+/* ซ่อนจากสายตาแต่โปรแกรมอ่านหน้าจอและ search engine ยังอ่านได้ */
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New', monospace;
 }

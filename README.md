@@ -21,7 +21,7 @@ src/
   Home.js         หน้าหลัก (hero + โปรไฟล์ศิลปิน)
   Event.js        กิจกรรม
   Work.js         ผลงาน (วิดีโอ YouTube)
-  Support.js      ซัพพอร์ต (QR เข้ากลุ่ม OPC)
+  Support.js      ซัพพอร์ต (OPC, TikTok และ X แฟนคลับ)
   Footer.js       ช่องทางการติดตาม แสดงท้ายทุกหน้า
   data/           ข้อมูลทั้งหมดของเว็บ
 public/images/    รูปภาพ
@@ -34,9 +34,9 @@ public/images/    รูปภาพ
 | ไฟล์ | ใช้กับ | หมายเหตุ |
 | --- | --- | --- |
 | `artist.json` | หน้าหลัก, footer | `birthDate` ใช้รูปแบบ `YYYY-MM-DD` |
-| `events.json` | กิจกรรม | แต่ละรายการมี `title` และ `date` (`YYYY-MM-DD`) |
-| `videos.json` | ผลงาน | ใส่ลิงก์แบบ embed ของ YouTube (`https://www.youtube.com/embed/...`) |
+| `events.json` | กิจกรรม | ต้องมี `title` และ `date` (`YYYY-MM-DD`) ใส่เพิ่มได้: `location`, `schedule` (รายการเวลา), `note`, `links` (`label` + `url`) งานจะแยกเป็น "กำลังจะมา" / "ที่ผ่านมา" ตามวันที่เอง |
+| `videos.json` | ผลงาน | แบ่งเป็นหมวด (`categories`) แต่ละคลิปมี `title` และ `url` แบบ embed ของ YouTube (`https://www.youtube.com/embed/...`) ใส่ `date` (วันที่ลงคลิป) ได้ หมวดที่ตั้ง `"sort": "newest"` จะเรียงคลิปใหม่สุดขึ้นก่อนเอง |
 | `socials.json` | footer | แต่ละรายการมี `name` และ `url` |
-| `support.json` | ซัพพอร์ต | รูป QR อยู่ที่ `public/images/support/` ถ้าใส่ `url` จะมีปุ่ม "เปิดลิงก์" ใต้ QR |
+| `support.json` | ซัพพอร์ต | รายการช่องทาง แต่ละอันมี `title`, `description` และใส่ `qr` (รูปใน `public/images/support/`), `url` + `label` (ข้อความบนปุ่ม) ได้ |
 
 วันที่จะแสดงเป็นรูปแบบไทยอัตโนมัติ เช่น `2009-08-26` → `26 ส.ค. 2552`

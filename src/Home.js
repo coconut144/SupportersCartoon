@@ -27,7 +27,7 @@ function Home() {
             ใครเพิ่งรู้จักน้องก็เริ่มจากตรงนี้ได้เลย
           </p>
           <div className="hero-actions">
-            <Link to="/work" className="btn">ดูสเตจเดบิวต์</Link>
+            <Link to="/work" className="btn">ดูผลงาน</Link>
             <Link to="/support" className="text-link">ซัพพอร์ตน้อง</Link>
             <a href="#follow" className="text-link">ช่องทางติดตาม</a>
           </div>
