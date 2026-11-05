@@ -1,11 +1,11 @@
 {
   "nickname": "Cartoon",
   "group": "BNK48",
-  "nameTh": "ณัฏฐธิดา ณ อัมภัย",
+  "nameTh": "ณัฎฐธิดา ณ อัมภัย",
   "nameEn": "Natthathida Na Amphai",
   "birthDate": "2009-08-26",
   "bloodGroup": "AB",
-  "heightCm": 161,
+  "heightCm": 163,
   "province": "ศรีสะเกษ",
   "likes": [
     "แมว",
@@ -19,5 +19,9 @@
     "ดูอะนิเมะ",
     "เล่นเกม"
   ],
-  "image": "/images/cartoon-profile.jpg"
+  "image": "/images/cartoon-profile.jpg",
+  "source": {
+    "label": "BNK48 Official Website",
+    "url": "https://www.bnk48.com/?page=listMembers&memberId=124"
+  }
 }

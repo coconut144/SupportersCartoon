@@ -1,6 +1,5 @@
 import './Home.css';
 import React from 'react';
-import { Link } from 'react-router-dom';
 import artist from './data/artist.json';
 import { formatDate } from './data/format';
 
@@ -22,15 +21,6 @@ function Home() {
             {artist.nickname} <span>{artist.group}</span>
           </h1>
           <p className="hero-fullname">{artist.nameTh} · {artist.nameEn}</p>
-          <p className="hero-intro">
-            รวมข้อมูล สเตจ และกิจกรรมของน้องการ์ตูนไว้ในที่เดียว
-            ใครเพิ่งรู้จักน้องก็เริ่มจากตรงนี้ได้เลย
-          </p>
-          <div className="hero-actions">
-            <Link to="/work" className="btn">ดูผลงาน</Link>
-            <Link to="/support" className="text-link">ซัพพอร์ตน้อง</Link>
-            <a href="#follow" className="text-link">ช่องทางติดตาม</a>
-          </div>
         </div>
 
         <img src={artist.image} className="hero-photo" alt={`${artist.nickname} ${artist.group}`} />
@@ -46,6 +36,10 @@ function Home() {
             </div>
           ))}
         </dl>
+        <p className="profile-source">
+          ที่มาของข้อมูล:{' '}
+          <a href={artist.source.url} target="_blank" rel="noopener noreferrer">{artist.source.label}</a>
+        </p>
       </section>
     </div>
   );

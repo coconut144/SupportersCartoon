@@ -17,6 +17,11 @@ function EventList({ items }) {
       {items.map((event) => (
         <li key={`${event.date}-${event.title}`}>
           <time dateTime={event.date}>{formatDate(event.date, 'th-TH')}</time>
+          {event.poster && (
+            <a href={event.poster} className="event-poster" target="_blank" rel="noopener noreferrer">
+              <img src={event.poster} alt={`โปสเตอร์ ${event.title}`} loading="lazy" />
+            </a>
+          )}
           <div className="event-body">
             <strong className="event-title">{event.title}</strong>
             {event.location && <p className="event-location">{event.location}</p>}

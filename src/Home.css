@@ -32,41 +32,8 @@
 }
 
 .hero-fullname {
-  margin: 0.4rem 0 1.4rem;
+  margin: 0.4rem 0 0;
   color: var(--muted);
-}
-
-.hero-intro {
-  max-width: 30em;
-  margin: 0 0 1.8rem;
-  font-size: 1.08rem;
-}
-
-.hero-actions {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 1.4rem;
-}
-
-.btn {
-  display: inline-block;
-  padding: 0.7rem 1.3rem;
-  border-radius: 6px;
-  background: var(--ink);
-  color: var(--paper);
-  font-weight: 500;
-  text-decoration: none;
-}
-
-.btn:hover {
-  background: var(--accent);
-}
-
-.text-link {
-  font-weight: 500;
-  text-decoration-color: var(--accent);
-  text-underline-offset: 4px;
 }
 
 .hero-photo {
@@ -114,6 +81,17 @@
   margin: 0;
 }
 
+.profile-source {
+  margin: 1rem 0 0;
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+
+.profile-source a {
+  text-decoration-color: var(--accent);
+  text-underline-offset: 3px;
+}
+
 /* ================== Responsive ================== */
 
 @media (max-width: 760px) {
@@ -130,3 +108,4 @@
     grid-template-columns: 1fr;
   }
 }
+

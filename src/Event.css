@@ -15,10 +15,33 @@
 
 .event-list > li {
   display: grid;
-  grid-template-columns: 9rem 1fr;
-  gap: 1rem;
+  grid-template-columns: 9rem 1fr 180px;
+  grid-template-areas: "date body poster";
+  gap: 1rem 1.5rem;
+  align-items: start;
   padding: 1.1rem 0;
   border-bottom: 1px dashed var(--line);
+}
+
+.event-list time {
+  grid-area: date;
+}
+
+.event-body {
+  grid-area: body;
+}
+
+/* โปสเตอร์ กดแล้วเปิดรูปเต็มในแท็บใหม่ */
+.event-poster {
+  grid-area: poster;
+  display: block;
+}
+
+.event-poster img {
+  display: block;
+  width: 100%;
+  border-radius: 6px;
+  border: 1px solid var(--line);
 }
 
 .event-list time {
@@ -64,9 +87,14 @@
   color: var(--muted);
 }
 
-@media (max-width: 480px) {
+@media (max-width: 760px) {
   .event-list > li {
     grid-template-columns: 1fr;
-    gap: 0.1rem;
+    grid-template-areas: "date" "poster" "body";
+    gap: 0.5rem;
+  }
+
+  .event-poster {
+    max-width: 320px;
   }
 }

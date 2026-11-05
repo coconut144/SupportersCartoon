@@ -9,7 +9,7 @@
 ```bash
 npm install
 npm start      # เปิด http://localhost:3000
-npm test       # รันเทสต์
+npm test       # รันเทสต์ (ต้องรันผ่าน npm เพื่อให้ได้เลขเวอร์ชัน)
 npm run build  # สร้างไฟล์สำหรับ deploy ไว้ในโฟลเดอร์ build/
 ```
 
@@ -33,10 +33,19 @@ public/images/    รูปภาพ
 
 | ไฟล์ | ใช้กับ | หมายเหตุ |
 | --- | --- | --- |
-| `artist.json` | หน้าหลัก, footer | `birthDate` ใช้รูปแบบ `YYYY-MM-DD` |
-| `events.json` | กิจกรรม | ต้องมี `title` และ `date` (`YYYY-MM-DD`) ใส่เพิ่มได้: `location`, `schedule` (รายการเวลา), `note`, `links` (`label` + `url`) งานจะแยกเป็น "กำลังจะมา" / "ที่ผ่านมา" ตามวันที่เอง |
+| `artist.json` | หน้าหลัก, footer | `birthDate` ใช้รูปแบบ `YYYY-MM-DD` · `source` คือที่มาของข้อมูล แสดงใต้ข้อมูลส่วนตัว |
+| `events.json` | กิจกรรม | ต้องมี `title` และ `date` (`YYYY-MM-DD`) ใส่เพิ่มได้: `location`, `schedule` (รายการเวลา), `note`, `poster` (รูปใน `public/images/events/`), `links` (`label` + `url`) งานจะแยกเป็น "กำลังจะมา" / "ที่ผ่านมา" ตามวันที่เอง |
 | `videos.json` | ผลงาน | แบ่งเป็นหมวด (`categories`) แต่ละคลิปมี `title` และ `url` แบบ embed ของ YouTube (`https://www.youtube.com/embed/...`) ใส่ `date` (วันที่ลงคลิป) ได้ หมวดที่ตั้ง `"sort": "newest"` จะเรียงคลิปใหม่สุดขึ้นก่อนเอง |
 | `socials.json` | footer | แต่ละรายการมี `name` และ `url` |
 | `support.json` | ซัพพอร์ต | รายการช่องทาง แต่ละอันมี `title`, `description` และใส่ `qr` (รูปใน `public/images/support/`), `url` + `label` (ข้อความบนปุ่ม) ได้ |
 
 วันที่จะแสดงเป็นรูปแบบไทยอัตโนมัติ เช่น `2009-08-26` → `26 ส.ค. 2552`
+
+## เลขเวอร์ชัน
+
+เลขเวอร์ชันที่มุมขวาล่างของเว็บมาจาก `"version"` ใน `package.json` เวลาปล่อยเวอร์ชันใหม่ ใช้คำสั่ง
+
+```bash
+npm version patch --no-git-tag-version   # 1.0.0 → 1.0.1 แก้เล็กน้อย
+npm version minor --no-git-tag-version   # 1.0.0 → 1.1.0 เพิ่มส่วนใหม่
+```

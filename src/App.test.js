@@ -16,9 +16,11 @@ test('แสดงเมนูหลักครบทุกหน้า', () =>
 test('หน้าแรกแสดงโปรไฟล์ศิลปินจากไฟล์ข้อมูล', () => {
   render(<App />);
   expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent('Cartoon');
-  expect(screen.getByText(/ณัฏฐธิดา ณ อัมภัย/)).toBeInTheDocument();
+  expect(screen.getByText(/ณัฎฐธิดา ณ อัมภัย/)).toBeInTheDocument();
   expect(screen.getByText('26 สิงหาคม 2552')).toBeInTheDocument();
   expect(screen.getByText(/แพนด้าแดง/)).toBeInTheDocument();
+  expect(screen.getByText('163 ซม.')).toBeInTheDocument();
+  expect(screen.getByRole('link', { name: 'BNK48 Official Website' })).toHaveAttribute('href', expect.stringContaining('bnk48.com'));
 });
 
 test('footer แสดงช่องทางการติดตาม', () => {
@@ -27,6 +29,9 @@ test('footer แสดงช่องทางการติดตาม', () =
   ['Facebook', 'Instagram', 'TikTok'].forEach((name) => {
     expect(within(footer).getByRole('link', { name })).toHaveAttribute('target', '_blank');
   });
+
+  // เลขเวอร์ชันมาจาก package.json ผ่าน .env (ต้องรันด้วย npm test)
+  expect(within(footer).getByText(`v${require('../package.json').version}`)).toBeInTheDocument();
 });
 
 test('หน้าซัพพอร์ตแสดง QR เข้ากลุ่ม OPC, TikTok และ X แฟนคลับ', () => {
@@ -60,4 +65,5 @@ test('หน้ากิจกรรมแสดงงานจากไฟล�
   expect(screen.getByText(/Roadshow/)).toBeInTheDocument();
   expect(screen.getAllByText('MCC Hall, The Mall Lifestore Bangkapi')).toHaveLength(2);
   expect(screen.getAllByRole('link', { name: 'ซื้อบัตร' })).toHaveLength(2);
+  expect(screen.getAllByAltText(/^โปสเตอร์ /)).toHaveLength(3);
 });

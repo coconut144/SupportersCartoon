@@ -36,3 +36,11 @@
 .footer-socials a:hover {
   color: var(--accent);
 }
+
+.site-version {
+  margin: 1.2rem 0 0;
+  text-align: right;
+  font-size: 0.8rem;
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+}

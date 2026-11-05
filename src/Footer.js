@@ -2,6 +2,8 @@ import './Footer.css';
 import React from 'react';
 import socials from './data/socials.json';
 
+const version = process.env.REACT_APP_VERSION;
+
 function Footer() {
   return (
     <footer id="follow" className="site-footer">
@@ -14,6 +16,7 @@ function Footer() {
             </li>
           ))}
         </ul>
+        {version && <p className="site-version">v{version}</p>}
       </div>
     </footer>
   );

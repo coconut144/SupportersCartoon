@@ -2,7 +2,7 @@
   {
     "title": "BNK48 & CGM48 Special Single “Kimi to Doko ka e Ikitai – อยากจะไปกับเธอ” Roadshow",
     "date": "2026-11-08",
-    "location": "Central Rama 9 (Bangkok)",
+    "location": "ลานโปรโมชั่น ชั้น 6, Central Rama 9 (Bangkok)",
     "schedule": [
       "12:00–13:00 Mini Concert",
       "14:00–15:00 Group Hi-Touch",
@@ -10,26 +10,52 @@
       "17:00–18:00 Group Hi-Touch"
     ],
     "note": "น้องการ์ตูนขึ้นวันอาทิตย์ 8 พ.ย. คู่กับ L, Berry, Mail, Micha, Palmmy · บัตร Group Hi-Touch ได้จากการซื้อเข็มกลัดในงาน",
+    "poster": "/images/events/roadshow-2026-11.jpg",
     "links": [
-      { "label": "โพสต์ประกาศ", "url": "https://web.facebook.com/share/p/18qGRK1HfF/" }
-    ]
-  },
-  {
-    "title": "BNK48 & CGM48 Senbatsu General Election 2026: Final Results Announcement",
-    "date": "2026-11-14",
-    "location": "MCC Hall, The Mall Lifestore Bangkapi",
-    "links": [
-      { "label": "ซื้อบัตร", "url": "https://www.eventpop.me/e/174077/ge2026" },
-      { "label": "โพสต์ประกาศ", "url": "https://web.facebook.com/share/p/1EKNNWFLdq/" }
+      {
+        "label": "โพสต์ประกาศ",
+        "url": "https://web.facebook.com/share/p/18qGRK1HfF/"
+      }
     ]
   },
   {
     "title": "BNK48 & CGM48 Concert 2026: JOURNEY OF DREAMS (夢の旅)",
     "date": "2026-11-14",
     "location": "MCC Hall, The Mall Lifestore Bangkapi",
+    "schedule": [
+      "12:00 Door Open",
+      "13:00 Start"
+    ],
+    "poster": "/images/events/journey-of-dreams.jpg",
     "links": [
-      { "label": "ซื้อบัตร", "url": "https://www.eventpop.me/e/173975/journeyofdreams" },
-      { "label": "โพสต์ประกาศ", "url": "https://web.facebook.com/share/p/1EKNNWFLdq/" }
+      {
+        "label": "ซื้อบัตร",
+        "url": "https://www.eventpop.me/e/173975/journeyofdreams"
+      },
+      {
+        "label": "โพสต์ประกาศ",
+        "url": "https://web.facebook.com/share/p/1EKNNWFLdq/"
+      }
+    ]
+  },
+  {
+    "title": "BNK48 & CGM48 Senbatsu General Election 2026: Final Results Announcement",
+    "date": "2026-11-14",
+    "location": "MCC Hall, The Mall Lifestore Bangkapi",
+    "schedule": [
+      "17:00 Door Open",
+      "18:00 Start"
+    ],
+    "poster": "/images/events/ge2026-final-results.jpg",
+    "links": [
+      {
+        "label": "ซื้อบัตร",
+        "url": "https://www.eventpop.me/e/174077/ge2026"
+      },
+      {
+        "label": "โพสต์ประกาศ",
+        "url": "https://web.facebook.com/share/p/1EKNNWFLdq/"
+      }
     ]
   }
 ]
