@@ -7,6 +7,9 @@ import Home from './Home';
 import Event from './Event';
 import Work from './Work';
 import Support from './Support';
+import GameHub from './GameHub';
+import NaamtokGame from './NaamtokGame';
+import NextGirlsGame from './NextGirlsGame';
 import Footer from './Footer';
 
 
@@ -22,6 +25,7 @@ function App() {
     <NavLink to="/event" className={({ isActive }) => isActive ? "nav-link active" : "nav-link"}>กิจกรรม</NavLink>
     <NavLink to="/work" className={({ isActive }) => isActive ? "nav-link active" : "nav-link"}>ผลงาน</NavLink>
     <NavLink to="/support" className={({ isActive }) => isActive ? "nav-link active" : "nav-link"}>ซัพพอร์ต</NavLink>
+    <NavLink to="/game" className={({ isActive }) => isActive ? "nav-link active" : "nav-link"}>เกม</NavLink>
   </nav>
 </header>
 
@@ -32,6 +36,9 @@ function App() {
             <Route path="/event" element={<Event />} />
             <Route path="/work" element={<Work />} />
             <Route path="/support" element={<Support />} />
+            <Route path="/game" element={<GameHub />} />
+            <Route path="/game/naamtok" element={<NaamtokGame />} />
+            <Route path="/game/next-girls" element={<NextGirlsGame />} />
             {/* หน้าเดิมที่ถูกรวมเข้าหน้าหลักและ footer แล้ว เก็บไว้ไม่ให้ลิงก์เก่าเสีย */}
             <Route path="/artist" element={<Navigate to="/" replace />} />
             <Route path="/contact" element={<Navigate to="/" replace />} />

@@ -22,6 +22,10 @@ src/
   Event.js        กิจกรรม
   Work.js         ผลงาน (วิดีโอ YouTube)
   Support.js      ซัพพอร์ต (OPC, TikTok และ X แฟนคลับ)
+  GameHub.js      หน้ารวมเกม
+  NaamtokGame.js  เกมน้ำตกไม่ผัก (logic อยู่ใน game/naamtok.js)
+  NextGirlsGame.js  เกม Journey to Next Girls (logic อยู่ใน game/nextGirls.js)
+  game/           logic เกม, pixel art ที่ใช้ร่วมกัน (pixel.js) และสถิติ/แชร์ (shared.js)
   Footer.js       ช่องทางการติดตาม แสดงท้ายทุกหน้า
   data/           ข้อมูลทั้งหมดของเว็บ
 public/images/    รูปภาพ

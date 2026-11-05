@@ -1,14 +1,20 @@
-import { render, screen, within } from '@testing-library/react';
+import { render, screen, within, fireEvent } from '@testing-library/react';
 import App from './App';
 
 beforeEach(() => {
   window.history.pushState({}, '', '/');
+  // jsdom วาด canvas ไม่ได้ เกมจะข้ามการวาดเมื่อไม่มี context
+  jest.spyOn(HTMLCanvasElement.prototype, 'getContext').mockReturnValue(null);
+});
+
+afterEach(() => {
+  jest.restoreAllMocks();
 });
 
 test('แสดงเมนูหลักครบทุกหน้า', () => {
   render(<App />);
   const nav = screen.getByRole('navigation');
-  ['หน้าหลัก', 'กิจกรรม', 'ผลงาน', 'ซัพพอร์ต'].forEach((label) => {
+  ['หน้าหลัก', 'กิจกรรม', 'ผลงาน', 'ซัพพอร์ต', 'เกม'].forEach((label) => {
     expect(within(nav).getByRole('link', { name: label })).toBeInTheDocument();
   });
 });
@@ -66,4 +72,30 @@ test('หน้ากิจกรรมแสดงงานจากไฟล�
   expect(screen.getAllByText('MCC Hall, The Mall Lifestore Bangkapi')).toHaveLength(2);
   expect(screen.getAllByRole('link', { name: 'ซื้อบัตร' })).toHaveLength(2);
   expect(screen.getAllByAltText(/^โปสเตอร์ /)).toHaveLength(3);
+});
+
+test('หน้ารวมเกมมีลิงก์ไปทั้งสองเกม', () => {
+  window.history.pushState({}, '', '/game');
+  render(<App />);
+  expect(screen.getByRole('link', { name: /น้ำตกไม่ผัก/ })).toHaveAttribute('href', '/game/naamtok');
+  expect(screen.getByRole('link', { name: /Journey to Next Girls/ })).toHaveAttribute('href', '/game/next-girls');
+});
+
+test('เกมน้ำตกไม่ผักเริ่มเล่นได้ และแสดงคะแนนกับจำนวนครั้งที่พลาด', () => {
+  window.history.pushState({}, '', '/game/naamtok');
+  render(<App />);
+  expect(screen.getByRole('heading', { name: 'น้ำตกไม่ผัก' })).toBeInTheDocument();
+  fireEvent.click(screen.getByRole('button', { name: 'เริ่มเล่น' }));
+  expect(screen.queryByRole('button', { name: 'เริ่มเล่น' })).not.toBeInTheDocument();
+  expect(screen.getByText('คะแนน')).toBeInTheDocument();
+  expect(screen.getByLabelText('พลาด 0 จาก 3 ชาม')).toBeInTheDocument();
+});
+
+test('เกม Journey to Next Girls เริ่มวิ่งได้ และแสดงระยะกับหัวใจ', () => {
+  window.history.pushState({}, '', '/game/next-girls');
+  render(<App />);
+  expect(screen.getByRole('heading', { name: 'Journey to Next Girls' })).toBeInTheDocument();
+  fireEvent.click(screen.getByRole('button', { name: 'เริ่มวิ่ง' }));
+  expect(screen.queryByRole('button', { name: 'เริ่มวิ่ง' })).not.toBeInTheDocument();
+  expect(screen.getByLabelText('เก็บหัวใจได้ 0 ดวง')).toBeInTheDocument();
 });
