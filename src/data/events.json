@@ -57,5 +57,26 @@
         "url": "https://web.facebook.com/share/p/1EKNNWFLdq/"
       }
     ]
+  },
+  {
+    "title": "BNK48 & CGM48 Senbatsu General Election 2026: Heart to Heart",
+    "date": "2026-11-15",
+    "location": "MCC Hall, The Mall Lifestore Bangkapi",
+    "schedule": [
+      "10:30–11:15 Appreciation Event (Round 1, ไม่ต้องใช้บัตร)",
+      "15:30–16:30 Heart to Heart Event (Round 6, ใช้ Letter Set)"
+    ],
+    "note": "น้องการ์ตูนอยู่ Lane 12 · Appreciation Event เข้าร่วมได้ฟรี · Heart to Heart ใช้ Letter Set (250 บาท) เลือกเขียนข้อความส่งกำลังใจ หรือรับตราปั๊มขอบคุณพร้อมชื่อเล่นจากน้อง",
+    "poster": "/images/events/heart-to-heart-2026.jpg",
+    "links": [
+      {
+        "label": "ตาราง Round Table",
+        "url": "/images/events/heart-to-heart-2026-round-table.jpg"
+      },
+      {
+        "label": "โพสต์ประกาศ",
+        "url": "https://web.facebook.com/share/p/151sQgiB5pq/"
+      }
+    ]
   }
 ]

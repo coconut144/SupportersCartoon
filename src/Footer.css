@@ -1,46 +1,51 @@
 /* สไตล์สำหรับ footer ช่องทางการติดตาม ที่แสดงทุกหน้า */
 .site-footer {
-  padding: 2.4rem clamp(1rem, 4vw, 3rem) 2rem;
-  background: var(--paper-deep);
-  border-top: 1px solid var(--line);
+  padding: 0 20px 28px;
   scroll-margin-top: 4rem;
 }
 
 .footer-inner {
-  max-width: 1080px;
+  max-width: 840px;
   margin: 0 auto;
+  padding-top: 20px;
+  border-top: 2px dashed var(--line);
 }
 
 .footer-title {
-  margin: 0 0 0.8rem;
-  font-family: var(--serif);
-  font-size: 1.3rem;
-  font-weight: 700;
+  margin: 0 0 6px;
+  font-family: var(--hand);
+  font-size: 18px;
+  font-weight: 600;
 }
 
 .footer-socials {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.6rem 1.8rem;
+  gap: 0 20px;
   margin: 0;
   padding: 0;
   list-style: none;
 }
 
 .footer-socials a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  font-family: var(--display);
   font-weight: 500;
-  text-decoration-color: var(--accent);
+  text-decoration-color: var(--pink);
+  text-decoration-thickness: 2px;
   text-underline-offset: 4px;
 }
 
 .footer-socials a:hover {
-  color: var(--accent);
+  color: var(--pink-deep);
 }
 
 .site-version {
-  margin: 1.2rem 0 0;
+  margin: 8px 0 0;
   text-align: right;
-  font-size: 0.8rem;
+  font-family: var(--mono);
+  font-size: 12px;
   color: var(--muted);
-  font-variant-numeric: tabular-nums;
 }

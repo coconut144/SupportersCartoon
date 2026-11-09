@@ -1,5 +1,3 @@
-
-
 import './App.css';
 import './Header.css';
 import { BrowserRouter as Router, Routes, Route, Navigate, NavLink, Link } from 'react-router-dom';
@@ -15,15 +13,15 @@ function App() {
     <Router>
       <div className="App">
         <header className="main-header">
-  <Link to="/" className="site-name">Cartoon</Link>
+          <Link to="/" className="site-name">Cartoon<small aria-hidden="true">♡ fan site</small></Link>
 
-  <nav className="main-nav">
-    <NavLink to="/" end className={({ isActive }) => isActive ? "nav-link active" : "nav-link"}>หน้าหลัก</NavLink>
-    <NavLink to="/event" className={({ isActive }) => isActive ? "nav-link active" : "nav-link"}>กิจกรรม</NavLink>
-    <NavLink to="/work" className={({ isActive }) => isActive ? "nav-link active" : "nav-link"}>ผลงาน</NavLink>
-    <NavLink to="/support" className={({ isActive }) => isActive ? "nav-link active" : "nav-link"}>ซัพพอร์ต</NavLink>
-  </nav>
-</header>
+          <nav className="main-nav">
+            <NavLink to="/" end className="nav-link">หน้าหลัก</NavLink>
+            <NavLink to="/event" className="nav-link">กิจกรรม</NavLink>
+            <NavLink to="/work" className="nav-link">วิดีโอ</NavLink>
+            <NavLink to="/support" className="nav-link">ซัพพอร์ต</NavLink>
+          </nav>
+        </header>
 
 
         <main>

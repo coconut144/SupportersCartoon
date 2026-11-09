@@ -1,111 +1,177 @@
 /* สไตล์สำหรับหน้า Home */
 .home {
-  max-width: 1080px;
+  max-width: 880px;
   margin: 0 auto;
-  padding: 0 clamp(1rem, 4vw, 3rem) 3rem;
+  padding: 28px 20px 56px;
+  display: flex;
+  flex-direction: column;
+  gap: 48px;
 }
 
 /* ================== Hero ================== */
 
 .home-hero {
-  display: grid;
-  grid-template-columns: 1.2fr 1fr;
-  gap: clamp(1.5rem, 5vw, 4rem);
+  display: flex;
+  flex-wrap: wrap;
   align-items: center;
-  padding: clamp(2rem, 6vw, 4.5rem) 0;
+  gap: 36px;
+}
+
+.hero-text {
+  flex: 1 1 280px;
+  min-width: 0;
 }
 
 .hero-name {
   margin: 0;
-  font-family: var(--serif);
-  font-size: clamp(3rem, 9vw, 5.5rem);
-  font-weight: 700;
-  line-height: 1.1;
+  font-size: clamp(52px, 13vw, 88px);
+  font-weight: 800;
+  line-height: 0.95;
 }
 
+/* BNK48 สีชมพู มีขีดไฮไลต์ฟ้าด้านล่าง
+   (ใช้ชมพูกลาง #d94a86 แทน --pink เพราะชมพูอ่อนบนพื้นขาวอ่านยาก) */
 .hero-name span {
-  font-family: var(--sans);
-  font-size: 0.3em;
-  font-weight: 500;
-  color: var(--muted);
-  vertical-align: middle;
+  position: relative;
+  z-index: 0;
+  display: table; /* ขึ้นบรรทัดใหม่ แต่กว้างเท่าตัวหนังสือ ให้ขีดไฮไลต์พอดีคำ */
+  margin-top: 0.08em;
+  font-size: 0.6em;
+  line-height: 1;
+  color: #d94a86;
+}
+
+.hero-name span::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0.1em;
+  height: 0.22em;
+  background: var(--sky-soft);
+  z-index: -1;
 }
 
 .hero-fullname {
-  margin: 0.4rem 0 0;
+  margin: 12px 0 0;
   color: var(--muted);
 }
 
-.hero-photo {
+/* บัตรสมาชิกเล็ก ๆ ใต้ชื่อ */
+.member-pass {
+  display: inline-flex;
+  margin: 22px 0 0;
+  background: var(--card);
+  border: 1.5px solid var(--line);
+  box-shadow: var(--shadow);
+  font-family: var(--mono);
+  font-size: 11px;
+  transform: rotate(-2deg);
+}
+
+.member-pass b {
+  padding: 8px 10px;
+  background: var(--sky-soft);
+  font-family: var(--display);
+  font-size: 12px;
+}
+
+.member-pass span {
+  padding: 8px 12px;
+  border-left: 2px dashed var(--line);
+}
+
+/* รูปน้องเป็นโพลารอยด์ เอียงนิด ๆ ติดเทปกาว */
+.polaroid {
+  position: relative;
+  flex: 0 1 300px;
+  margin: 0 auto;
+  padding: 12px 12px 46px;
+  background: #fff;
+  box-shadow: 0 6px 18px rgba(34, 48, 90, 0.14);
+  transform: rotate(3deg);
+}
+
+.polaroid img {
+  display: block;
   width: 100%;
   aspect-ratio: 4 / 5;
   object-fit: cover;
   object-position: 50% 30%;
-  border-radius: 6px;
+}
+
+.polaroid-caption {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 11px;
+  text-align: center;
+  font-family: var(--hand);
+  font-size: 17px;
+}
+
+.polaroid-corner {
+  top: auto;
+  bottom: -10px;
+  right: -14px;
+  width: 70px;
+  transform: rotate(38deg);
 }
 
 /* ================== Sections ================== */
 
-.home-section {
-  padding: 2.2rem 0;
-  border-top: 1px solid var(--line);
+.home-more {
+  margin: 10px 0 0;
+  text-align: right;
 }
 
-.home-section h2 {
-  margin: 0 0 1.2rem;
-  font-family: var(--serif);
-  font-size: 1.5rem;
-  font-weight: 700;
+/* ข้อมูลส่วนตัวเขียนบนกระดาษมีเส้นบรรทัด (เส้นใต้แต่ละแถว จึงตรงเสมอแม้ข้อความขึ้นสองบรรทัด) */
+.notebook {
+  padding: 4px 20px 8px;
+  border-radius: 8px;
 }
 
 .profile-list {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  column-gap: 3rem;
+  column-gap: 32px;
   margin: 0;
 }
 
 .profile-list div {
-  display: grid;
-  grid-template-columns: 7rem 1fr;
-  gap: 1rem;
-  padding: 0.75rem 0;
-  border-bottom: 1px dashed var(--line);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 44px;
+  padding: 6px 0;
+  border-bottom: 1px solid var(--line);
 }
 
 .profile-list dt {
-  color: var(--muted);
+  flex: 0 0 84px;
+  font-family: var(--hand);
+  font-weight: 600;
+  color: var(--sky-deep);
 }
 
 .profile-list dd {
   margin: 0;
+  min-width: 0;
 }
 
 .profile-source {
-  margin: 1rem 0 0;
+  margin: 10px 0 0;
   font-size: 0.85rem;
   color: var(--muted);
 }
 
 .profile-source a {
-  text-decoration-color: var(--accent);
+  color: var(--pink-deep);
   text-underline-offset: 3px;
 }
 
-/* ================== Responsive ================== */
-
-@media (max-width: 760px) {
-  .home-hero {
-    grid-template-columns: 1fr;
-  }
-
-  .hero-photo {
-    order: -1;
-    max-height: 420px;
-  }
-
+@media (max-width: 640px) {
   .profile-list {
     grid-template-columns: 1fr;
   }
 }
-

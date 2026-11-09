@@ -4,8 +4,22 @@
     {
       "name": "dev",
       "runtimeExecutable": "cmd",
-      "runtimeArgs": ["/c", "set BROWSER=none&& npm start"],
+      "runtimeArgs": [
+        "/c",
+        "set BROWSER=none&& npm start"
+      ],
       "port": 3000
+    },
+    {
+      "name": "dev-mac",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": [
+        "start"
+      ],
+      "port": 3000,
+      "env": {
+        "BROWSER": "none"
+      }
     }
   ]
 }

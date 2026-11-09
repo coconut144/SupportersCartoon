@@ -7,3 +7,14 @@ export function formatDate(isoDate, locale, month = 'short') {
     timeZone: 'UTC',
   });
 }
+
+// แยกวันที่สำหรับต้นขั้วตั๋ว: วัน (14) เดือน (พ.ย.) ปี (2569)
+export function dateParts(isoDate) {
+  const date = new Date(isoDate);
+  const part = (options) => date.toLocaleDateString('th-TH', { ...options, timeZone: 'UTC' });
+  return {
+    day: part({ day: 'numeric' }),
+    month: part({ month: 'short' }),
+    year: part({ year: 'numeric' }).replace(/\D/g, ''),
+  };
+}

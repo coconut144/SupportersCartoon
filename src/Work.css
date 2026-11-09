@@ -1,54 +1,80 @@
-/* สไตล์สำหรับหน้า Work */
-.work-category + .work-category {
-  margin-top: 2.5rem;
-}
-
-.work-category-title {
-  margin: 0 0 1rem;
-  padding-bottom: 0.5rem;
-  border-bottom: 1px solid var(--line);
-  font-family: var(--serif);
-  font-size: 1.4rem;
-  font-weight: 700;
-}
-
-.work-video {
-  margin: 0;
-}
-
-.work-video figcaption {
-  margin-top: 0.5rem;
-  font-size: 0.95rem;
-}
-
-.work-video time {
-  display: block;
-  color: var(--muted);
-  font-size: 0.85rem;
+/* สไตล์สำหรับหน้า Work (วิดีโอ): คลิปแต่ละอันเป็นกระดาษแปะเทป */
+.work-category .hand-title {
+  margin-bottom: 22px;
 }
 
 .work-videos-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  gap: 1.2rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 28px 20px;
 }
 
-.work-video-card {
-  aspect-ratio: 16 / 9;
+.work-video {
+  flex: 1 1 260px;
+  max-width: 100%;
+  margin: 0;
+  padding: 12px 12px 16px;
   border-radius: 6px;
-  overflow: hidden;
-  background: var(--paper-deep);
 }
 
-.work-video-card iframe {
+/* เอียงสลับกันนิด ๆ */
+.work-video:nth-child(odd) { transform: rotate(-0.5deg); }
+.work-video:nth-child(even) { transform: rotate(0.6deg); }
+
+/* กรอบคลิป 16:9 พื้นสีอ่อนระหว่างรอโหลด */
+.work-video-frame {
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+}
+
+.work-video-frame.is-pink {
+  background: var(--pink-soft);
+}
+
+.work-video-frame.is-sky {
+  background: var(--sky-soft);
+}
+
+.work-video-frame iframe {
   display: block;
   width: 100%;
   height: 100%;
   border: none;
 }
 
-@media (max-width: 360px) {
-  .work-videos-grid {
-    grid-template-columns: 1fr;
-  }
+.work-video figcaption {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
+  margin-top: 12px;
+  padding: 0 4px;
+}
+
+.work-video-title {
+  font-family: var(--display);
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 1.4;
+}
+
+.work-video time {
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--muted);
+}
+
+/* ป้ายหมวดลายมือ */
+.tag {
+  font-family: var(--hand);
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.tag-pink {
+  color: var(--pink-deep);
+}
+
+.tag-sky {
+  color: var(--sky-deep);
 }
