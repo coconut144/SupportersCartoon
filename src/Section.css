@@ -1,6 +1,9 @@
-/* โครงหน้าย่อยที่ใช้ร่วมกัน (กิจกรรม, ผลงาน, ซัพพอร์ต) */
+/* โครงหน้าย่อยที่ใช้ร่วมกัน (กิจกรรม, วิดีโอ, ซัพพอร์ต) */
 .section {
-  max-width: 1080px;
+  max-width: 880px;
   margin: 0 auto;
-  padding: clamp(2rem, 5vw, 3.5rem) clamp(1rem, 4vw, 3rem) 3rem;
+  padding: 28px 20px 56px;
+  display: flex;
+  flex-direction: column;
+  gap: 36px;
 }

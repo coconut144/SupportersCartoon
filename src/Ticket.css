@@ -1,0 +1,193 @@
+/* ตั๋วกิจกรรมแปะสมุด */
+.ticket {
+  display: flex;
+}
+
+/* เอียงไม่เท่ากันนิด ๆ ให้ดูเหมือนแปะด้วยมือ */
+.ticket:nth-child(3n + 1) { transform: rotate(-0.6deg); }
+.ticket:nth-child(3n + 2) { transform: rotate(0.5deg); }
+.ticket:nth-child(3n) { transform: rotate(-0.3deg); }
+
+/* ต้นขั้ววันที่ */
+.ticket-stub {
+  flex: 0 0 96px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 14px 8px;
+  border-radius: 11px 0 0 11px;
+  background: var(--pink-soft);
+  font-family: var(--display);
+  text-align: center;
+  line-height: 1.1;
+}
+
+.ticket.is-sky .ticket-stub {
+  background: var(--sky-soft);
+}
+
+.ticket-stub b {
+  font-size: 36px;
+  font-weight: 800;
+}
+
+.ticket-stub span {
+  margin-top: 4px;
+  font-family: var(--hand);
+  font-weight: 600;
+  font-size: 15px;
+}
+
+.ticket-stub small {
+  margin-top: 6px;
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--muted);
+}
+
+/* รอยปรุ พร้อมรอยเว้าครึ่งวงกลมบนล่าง */
+.ticket-perf {
+  position: relative;
+  width: 0;
+  border-left: 2px dashed var(--line);
+}
+
+.ticket-perf::before,
+.ticket-perf::after {
+  content: "";
+  position: absolute;
+  left: -10px;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: var(--paper);
+  border: 1.5px solid var(--line);
+}
+
+.ticket-perf::before {
+  top: -10px;
+  clip-path: inset(50% 0 0 0);
+}
+
+.ticket-perf::after {
+  bottom: -10px;
+  clip-path: inset(0 0 50% 0);
+}
+
+.ticket-body {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  gap: 16px;
+  padding: 16px 18px;
+}
+
+.ticket-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.ticket-title {
+  display: block;
+  font-family: var(--display);
+  font-weight: 600;
+  font-size: 19px;
+  line-height: 1.3;
+}
+
+.ticket-location {
+  margin: 4px 0 0;
+  font-family: var(--display);
+  font-weight: 500;
+  font-size: 15px;
+  color: var(--sky-deep);
+}
+
+.ticket-schedule {
+  margin: 8px 0 0;
+  padding-left: 1.1rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.ticket-schedule li::marker {
+  color: var(--pink);
+}
+
+.ticket-note {
+  margin: 8px 0 0;
+  font-size: 15px;
+  color: var(--muted);
+}
+
+.ticket-foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 4px 12px;
+  margin-top: 8px;
+}
+
+.ticket-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0 16px;
+  margin: 0;
+}
+
+.ticket-barcode {
+  width: 110px;
+  height: 20px;
+  opacity: 0.7;
+  background: repeating-linear-gradient(90deg,
+    var(--ink) 0 2px, transparent 2px 4px,
+    var(--ink) 4px 5px, transparent 5px 8px,
+    var(--ink) 8px 11px, transparent 11px 13px);
+}
+
+/* โปสเตอร์เป็นรูปเล็กติดในตั๋ว กดแล้วเปิดรูปเต็ม */
+.ticket-poster {
+  flex: 0 0 104px;
+  align-self: flex-start;
+  display: block;
+  padding: 5px 5px 14px;
+  background: #fff;
+  box-shadow: 0 3px 10px rgba(34, 48, 90, 0.12);
+  transform: rotate(3deg);
+}
+
+.ticket-poster img {
+  display: block;
+  width: 100%;
+}
+
+/* งานที่ผ่านไปแล้ว: ต้นขั้วสีเทา */
+.ticket.is-past .ticket-stub {
+  background: #efe8dc;
+  color: var(--muted);
+}
+
+@media (max-width: 600px) {
+  .ticket-stub {
+    flex-basis: 74px;
+  }
+
+  .ticket-stub b {
+    font-size: 28px;
+  }
+
+  .ticket-body {
+    flex-direction: column;
+    padding: 14px;
+  }
+
+  .ticket-poster {
+    flex: none;
+    width: 96px;
+  }
+
+  .ticket .sticker {
+    right: -4px;
+  }
+}

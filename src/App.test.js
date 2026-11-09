@@ -14,7 +14,7 @@ afterEach(() => {
 test('แสดงเมนูหลักครบทุกหน้า', () => {
   render(<App />);
   const nav = screen.getByRole('navigation');
-  ['หน้าหลัก', 'กิจกรรม', 'ผลงาน', 'ซัพพอร์ต', 'เกม'].forEach((label) => {
+  ['หน้าหลัก', 'กิจกรรม', 'วิดีโอ', 'ซัพพอร์ต', 'เกม'].forEach((label) => {
     expect(within(nav).getByRole('link', { name: label })).toBeInTheDocument();
   });
 });
@@ -45,13 +45,13 @@ test('หน้าซัพพอร์ตแสดง QR เข้ากลุ�
   render(<App />);
   expect(screen.getByRole('heading', { name: 'JOIN OPC' })).toBeInTheDocument();
   expect(screen.getByText('เข้ากลุ่ม LINE OpenChat ของแฟนคลับ')).toBeInTheDocument();
-  expect(screen.getByAltText('QR code JOIN OPC')).toBeInTheDocument();
+  expect(screen.getByAltText('QR code เข้ากลุ่ม LINE OpenChat ของแฟนคลับ')).toBeInTheDocument();
   expect(screen.getByRole('link', { name: 'เข้ากลุ่มใน LINE' })).toHaveAttribute('href', expect.stringMatching(/^https:\/\/line\.me\//));
   expect(screen.getByRole('link', { name: 'ไปที่ TikTok' })).toHaveAttribute('href', 'https://www.tiktok.com/@cartoonbnk48thfc');
   expect(screen.getByRole('link', { name: 'ไปที่ X' })).toHaveAttribute('href', 'https://x.com/cartoonbnk_thfc');
 });
 
-test('หน้าผลงานเรียงหมวด Highlight, Music Video, Performance, Variety', () => {
+test('หน้าวิดีโอเรียงหมวด Highlight, Music Video, Performance, Variety', () => {
   window.history.pushState({}, '', '/work');
   render(<App />);
   const categories = screen.getAllByRole('heading', { level: 2 }).map((h) => h.textContent);
@@ -69,9 +69,9 @@ test('หน้ากิจกรรมแสดงงานจากไฟล�
   window.history.pushState({}, '', '/event');
   render(<App />);
   expect(screen.getByText(/Roadshow/)).toBeInTheDocument();
-  expect(screen.getAllByText('MCC Hall, The Mall Lifestore Bangkapi')).toHaveLength(2);
+  expect(screen.getAllByText('MCC Hall, The Mall Lifestore Bangkapi')).toHaveLength(3);
   expect(screen.getAllByRole('link', { name: 'ซื้อบัตร' })).toHaveLength(2);
-  expect(screen.getAllByAltText(/^โปสเตอร์ /)).toHaveLength(3);
+  expect(screen.getAllByAltText(/^โปสเตอร์ /)).toHaveLength(4);
 });
 
 test('หน้ารวมเกมมีลิงก์ไปทั้งสองเกม', () => {

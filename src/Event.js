@@ -1,45 +1,22 @@
 import './Section.css';
 import './Event.css';
 import React from 'react';
-import events from './data/events.json';
-import { formatDate } from './data/format';
+import { upcoming, past } from './data/events';
+import Ticket from './Ticket';
 
-// วันนี้ในรูปแบบ YYYY-MM-DD ตามเวลาเครื่องผู้ชม เทียบกับวันที่ในไฟล์ได้ตรง ๆ
-const today = new Date().toLocaleDateString('en-CA');
-
-const byDate = (a, b) => a.date.localeCompare(b.date);
-const upcoming = events.filter((event) => event.date >= today).sort(byDate);
-const past = events.filter((event) => event.date < today).sort(byDate).reverse();
-
-function EventList({ items }) {
+// สีต้นขั้วสลับชมพู/ฟ้า งานแรกที่กำลังจะมาติดสติกเกอร์ "ไปกัน!"
+function TicketList({ items, isPast = false }) {
   return (
-    <ol className="event-list">
-      {items.map((event) => (
-        <li key={`${event.date}-${event.title}`}>
-          <time dateTime={event.date}>{formatDate(event.date, 'th-TH')}</time>
-          {event.poster && (
-            <a href={event.poster} className="event-poster" target="_blank" rel="noopener noreferrer">
-              <img src={event.poster} alt={`โปสเตอร์ ${event.title}`} loading="lazy" />
-            </a>
-          )}
-          <div className="event-body">
-            <strong className="event-title">{event.title}</strong>
-            {event.location && <p className="event-location">{event.location}</p>}
-            {event.schedule && (
-              <ul className="event-schedule">
-                {event.schedule.map((slot) => <li key={slot}>{slot}</li>)}
-              </ul>
-            )}
-            {event.note && <p className="event-note">{event.note}</p>}
-            {event.links && (
-              <p className="event-links">
-                {event.links.map((link) => (
-                  <a key={link.url} href={link.url} target="_blank" rel="noopener noreferrer">{link.label}</a>
-                ))}
-              </p>
-            )}
-          </div>
-        </li>
+    <ol className="ticket-list">
+      {items.map((event, index) => (
+        <Ticket
+          key={`${event.date}-${event.title}`}
+          as="li"
+          event={event}
+          tone={index % 2 ? 'sky' : 'pink'}
+          sticker={!isPast && index === 0 ? 'ไปกัน!' : undefined}
+          past={isPast}
+        />
       ))}
     </ol>
   );
@@ -48,18 +25,20 @@ function EventList({ items }) {
 function Event() {
   return (
     <section className="section">
-      <h1 className="visually-hidden">กิจกรรม</h1>
+      <h1 className="page-title">กิจกรรม</h1>
 
-      <h2 className="event-group-title">กำลังจะมา</h2>
-      {upcoming.length > 0
-        ? <EventList items={upcoming} />
-        : <p className="event-empty">ยังไม่มีงานที่ประกาศ</p>}
+      <div>
+        <h2 className="hand-title">ตั๋วที่กำลังจะใช้</h2>
+        {upcoming.length > 0
+          ? <TicketList items={upcoming} />
+          : <p className="empty-box">ยังไม่มีงานที่ประกาศ</p>}
+      </div>
 
       {past.length > 0 && (
-        <>
-          <h2 className="event-group-title">ที่ผ่านมา</h2>
-          <EventList items={past} />
-        </>
+        <div>
+          <h2 className="hand-title">ตั๋วที่เก็บไว้</h2>
+          <TicketList items={past} isPast />
+        </div>
       )}
     </section>
   );

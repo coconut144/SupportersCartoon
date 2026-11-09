@@ -1,78 +1,186 @@
 /* สไตล์สำหรับหน้า Support */
-.support {
+
+/* JOIN OPC เป็นบัตรเข้ากลุ่ม: ข้อความ | รอยปรุ | QR ติดเทป */
+.support-pass {
+  display: flex;
+  transform: rotate(0.4deg);
+}
+
+.support-pass-main {
+  flex: 1;
+  min-width: 0;
   display: flex;
   flex-direction: column;
   align-items: flex-start;
+  padding: clamp(22px, 5vw, 32px);
 }
 
-.support + .support,
-.support + .support-row {
-  margin-top: 2.5rem;
-  padding-top: 2rem;
-  border-top: 1px solid var(--line);
-}
-
-/* ช่องทางที่มีแค่ลิงก์ วางข้างกัน */
-.support-row {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 1.5rem;
-  max-width: 640px;
-}
-
-.support-row > .support + .support {
-  margin-top: 0;
-  padding-top: 0;
-  border-top: 0;
-}
-
-/* ให้ปุ่มของทุกช่องทางในแถวอยู่ระดับเดียวกัน แม้คำอธิบายยาวไม่เท่ากัน */
-.support-row .support-join {
-  margin-top: auto;
-}
-
-.support h2 {
+.support-code {
   margin: 0;
-  font-size: 1.2rem;
-  font-weight: 600;
-  letter-spacing: 0.08em;
-}
-
-.support p {
-  margin: 0.2rem 0 1rem;
+  font-family: var(--mono);
+  font-size: 11px;
   color: var(--muted);
 }
 
-.support img {
-  width: min(240px, 100%);
-  margin-bottom: 0.8rem;
-  border: 1px solid var(--line);
-  border-radius: 6px;
-  background: #ffffff;
+.support-title {
+  margin-top: 6px;
+  font-size: clamp(44px, 11vw, 64px);
 }
 
-.support-join {
-  margin-top: 0.2rem;
-  padding: 0.7rem 1.3rem;
-  border-radius: 6px;
-  background: var(--ink);
-  color: var(--paper);
-  font-weight: 500;
-  text-decoration: none;
-  transition: transform 0.1s ease;
+.support-title span + span {
+  color: var(--pink);
 }
 
-/* สีน้ำตาลเข้มตลอด ตอนกดค้างแค่ยุบลงเล็กน้อยให้รู้ว่ากดโดนแล้ว */
-.support-join:active {
-  transform: translateY(1px);
+.support-desc {
+  margin: 10px 0 20px;
+  font-size: 17px;
+  color: var(--muted);
 }
 
-@media (prefers-reduced-motion: reduce) {
-  .support-join {
-    transition: none;
+/* รอยปรุแนวตั้ง พร้อมรอยเว้าบนล่าง */
+.support-perf {
+  position: relative;
+  width: 0;
+  border-left: 2px dashed var(--line);
+}
+
+.support-perf::before,
+.support-perf::after {
+  content: "";
+  position: absolute;
+  left: -10px;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: var(--paper);
+  border: 1.5px solid var(--line);
+}
+
+.support-perf::before {
+  top: -10px;
+  clip-path: inset(50% 0 0 0);
+}
+
+.support-perf::after {
+  bottom: -10px;
+  clip-path: inset(0 0 50% 0);
+}
+
+.support-qr-wrap {
+  flex: 0 0 240px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+}
+
+.support-qr {
+  position: relative;
+  width: 100%;
+  max-width: 190px;
+  padding: 8px;
+  background: #fff;
+  box-shadow: 0 3px 10px rgba(34, 48, 90, 0.12);
+  transform: rotate(-3deg);
+}
+
+.support-qr img {
+  display: block;
+  width: 100%;
+}
+
+.support-qr-tape {
+  width: 64px;
+  margin-left: -32px;
+}
+
+/* กระดาษช่องทางติดตาม */
+.support-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 24px 20px;
+}
+
+.support-card {
+  flex: 1 1 280px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
+  padding: 22px;
+}
+
+.support-card:nth-child(odd) { transform: rotate(-0.5deg); }
+.support-card:nth-child(even) { transform: rotate(0.5deg); }
+
+.support-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 46px;
+  height: 46px;
+  margin-bottom: 6px;
+  border-radius: 50%;
+  background: var(--pink-soft);
+  color: var(--ink);
+}
+
+.support-card.is-sky .support-icon {
+  background: var(--sky-soft);
+}
+
+.support-card-title {
+  margin: 0;
+  font-size: 22px;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+}
+
+.support-card-text {
+  margin: 0;
+  color: var(--muted);
+}
+
+.support-handle {
+  margin: 0;
+  font-family: var(--hand);
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--sky-deep);
+  overflow-wrap: anywhere;
+}
+
+/* ให้ปุ่มของทุกการ์ดอยู่ระดับเดียวกัน แม้คำอธิบายยาวไม่เท่ากัน */
+.support-card .btn {
+  margin-top: auto;
+}
+
+.support-card .support-handle + .btn,
+.support-card .support-card-text + .btn {
+  margin-top: 14px;
+}
+
+/* จอแคบ: QR ลงไปอยู่ใต้ข้อความ รอยปรุเป็นแนวนอน */
+@media (max-width: 600px) {
+  .support-pass {
+    flex-direction: column;
   }
 
-  .support-join:active {
-    transform: none;
+  .support-perf {
+    width: auto;
+    height: 0;
+    margin: 0 16px;
+    border-left: 0;
+    border-top: 2px dashed var(--line);
+  }
+
+  .support-perf::before,
+  .support-perf::after {
+    display: none;
+  }
+
+  .support-qr-wrap {
+    flex: none;
+    padding: 24px 24px 28px;
   }
 }

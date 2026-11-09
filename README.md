@@ -18,15 +18,18 @@ npm run build  # สร้างไฟล์สำหรับ deploy ไว้�
 ```
 src/
   App.js          header, เมนู และ routes
-  Home.js         หน้าหลัก (hero + โปรไฟล์ศิลปิน)
+  Home.js         หน้าหลัก (hero + โปรไฟล์ศิลปิน + งานถัดไป)
   Event.js        กิจกรรม
-  Work.js         ผลงาน (วิดีโอ YouTube)
+  Ticket.js       ตั๋วกิจกรรม ใช้ร่วมกันในหน้าหลักและหน้ากิจกรรม
+  Work.js         วิดีโอ (คลิป YouTube)
   Support.js      ซัพพอร์ต (OPC, TikTok และ X แฟนคลับ)
   GameHub.js      หน้ารวมเกม
   NaamtokGame.js  เกมน้ำตกไม่ผัก (logic อยู่ใน game/naamtok.js)
   NextGirlsGame.js  เกม Journey to Next Girls (logic อยู่ใน game/nextGirls.js)
   game/           logic เกม, pixel art ที่ใช้ร่วมกัน (pixel.js) และสถิติ/แชร์ (shared.js)
   Footer.js       ช่องทางการติดตาม แสดงท้ายทุกหน้า
+  icons.js        ไอคอนเส้นที่ใช้ในปุ่มและการ์ด
+  index.css       สี ฟอนต์ และคอมโพเนนต์ที่ใช้ทุกหน้า (เทปกาว, สติกเกอร์, ปุ่ม)
   data/           ข้อมูลทั้งหมดของเว็บ
 public/images/    รูปภาพ
 ```
@@ -38,8 +41,8 @@ public/images/    รูปภาพ
 | ไฟล์ | ใช้กับ | หมายเหตุ |
 | --- | --- | --- |
 | `artist.json` | หน้าหลัก, footer | `birthDate` ใช้รูปแบบ `YYYY-MM-DD` · `source` คือที่มาของข้อมูล แสดงใต้ข้อมูลส่วนตัว |
-| `events.json` | กิจกรรม | ต้องมี `title` และ `date` (`YYYY-MM-DD`) ใส่เพิ่มได้: `location`, `schedule` (รายการเวลา), `note`, `poster` (รูปใน `public/images/events/`), `links` (`label` + `url`) งานจะแยกเป็น "กำลังจะมา" / "ที่ผ่านมา" ตามวันที่เอง |
-| `videos.json` | ผลงาน | แบ่งเป็นหมวด (`categories`) แต่ละคลิปมี `title` และ `url` แบบ embed ของ YouTube (`https://www.youtube.com/embed/...`) ใส่ `date` (วันที่ลงคลิป) ได้ หมวดที่ตั้ง `"sort": "newest"` จะเรียงคลิปใหม่สุดขึ้นก่อนเอง |
+| `events.json` | กิจกรรม | ต้องมี `title` และ `date` (`YYYY-MM-DD`) ใส่เพิ่มได้: `location`, `schedule` (รายการเวลา), `note`, `poster` (รูปใน `public/images/events/`), `links` (`label` + `url`) งานจะแยกเป็น "ตั๋วที่กำลังจะใช้" / "ตั๋วที่เก็บไว้" ตามวันที่เอง งานที่ใกล้ที่สุดจะขึ้นในหน้าหลักด้วย |
+| `videos.json` | วิดีโอ | แบ่งเป็นหมวด (`categories`) แต่ละคลิปมี `title` และ `url` แบบ embed ของ YouTube (`https://www.youtube.com/embed/...`) ใส่ `date` (วันที่ลงคลิป) ได้ ชื่อหมวดจะกลายเป็นปุ่มกรองเอง หมวดที่ตั้ง `"sort": "newest"` จะเรียงคลิปใหม่สุดขึ้นก่อนเอง |
 | `socials.json` | footer | แต่ละรายการมี `name` และ `url` |
 | `support.json` | ซัพพอร์ต | รายการช่องทาง แต่ละอันมี `title`, `description` และใส่ `qr` (รูปใน `public/images/support/`), `url` + `label` (ข้อความบนปุ่ม) ได้ |
 

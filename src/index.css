@@ -1,12 +1,24 @@
+/* แนว "สมุดแฟนคลับ × บัตรคอนเสิร์ต": กระดาษตาราง ลายมือ เทปกาว และตั๋ว */
 :root {
-  --paper: #fbf8f3;
-  --paper-deep: #f3ede4;
-  --ink: #2a2420;
-  --muted: #7a6f66;
-  --line: #e6ddd1;
-  --accent: #c8475f;
-  --serif: 'Noto Serif Thai', Georgia, serif;
-  --sans: 'IBM Plex Sans Thai', 'Segoe UI', sans-serif;
+  --paper: #fbf8f2;       /* พื้นกระดาษ */
+  --grid: rgba(31, 111, 184, 0.08); /* เส้นตารางสมุดกราฟ */
+  --card: #fffdf9;        /* กระดาษแผ่นที่แปะ */
+  --line: #e8dcc8;        /* เส้นขอบ / เส้นประ */
+  --ink: #22305a;         /* ตัวหนังสือหลัก */
+  --muted: #5b6380;       /* ตัวหนังสือรอง */
+  --pink: #ff7fb2;        /* ชมพูหลัก ตัวหนังสือบนสีนี้ใช้ --ink */
+  --pink-soft: #ffe3ee;
+  --pink-deep: #b8275f;   /* ชมพูสำหรับตัวหนังสือ */
+  --sky: #6fc0ff;
+  --sky-soft: #ddf0ff;
+  --sky-deep: #1f6fb8;    /* ฟ้าสำหรับตัวหนังสือ */
+  --tape-pink: rgba(255, 127, 178, 0.5);
+  --tape-sky: rgba(111, 192, 255, 0.45);
+  --shadow: 0 4px 12px rgba(34, 48, 90, 0.08);
+  --hand: 'Mali', cursive;
+  --display: 'Prompt', sans-serif;
+  --sans: 'Noto Sans Thai', system-ui, sans-serif;
+  --mono: 'JetBrains Mono', ui-monospace, monospace;
 }
 
 body {
@@ -14,21 +26,30 @@ body {
   font-family: var(--sans);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  background: var(--paper);
   color: var(--ink);
-  line-height: 1.7;
+  line-height: 1.6;
+  background: var(--paper);
+  background-image:
+    linear-gradient(var(--grid) 1px, transparent 1px),
+    linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+  background-size: 22px 22px;
 }
 
 * {
   box-sizing: border-box;
 }
 
+h1, h2, h3 {
+  font-family: var(--display);
+}
+
 a {
   color: inherit;
 }
 
-a:focus-visible {
-  outline: 2px solid var(--accent);
+a:focus-visible,
+button:focus-visible {
+  outline: 3px solid var(--ink);
   outline-offset: 3px;
 }
 
@@ -47,4 +68,200 @@ a:focus-visible {
 
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New', monospace;
+}
+
+/* ================== คอมโพเนนต์ที่ใช้ซ้ำทุกหน้า ================== */
+
+.page-title {
+  margin: 0;
+  font-size: clamp(44px, 11vw, 64px);
+  font-weight: 800;
+  line-height: 1;
+}
+
+/* หัวข้อลายมือ ตามด้วยเส้นประยาวถึงขอบ */
+.hand-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0 0 18px;
+  font-family: var(--hand);
+  font-weight: 600;
+  font-size: 24px;
+  line-height: 1.4;
+}
+
+.hand-title::after {
+  content: "";
+  flex: 1;
+  border-top: 2px dashed var(--line);
+}
+
+/* กระดาษแผ่นที่แปะในสมุด */
+.sheet {
+  position: relative;
+  background: var(--card);
+  border: 1.5px solid var(--line);
+  border-radius: 12px;
+  box-shadow: var(--shadow);
+}
+
+/* เทปกาว วางตำแหน่งด้วย .tape-left / .tape-right / .tape-center */
+.tape {
+  position: absolute;
+  top: -11px;
+  width: 72px;
+  height: 22px;
+  background: var(--tape-pink);
+  pointer-events: none;
+  z-index: 2;
+}
+
+.tape-sky {
+  background: var(--tape-sky);
+}
+
+.tape-left {
+  left: 24px;
+  transform: rotate(-6deg);
+}
+
+.tape-right {
+  right: 30px;
+  transform: rotate(5deg);
+}
+
+.tape-center {
+  left: 50%;
+  width: 96px;
+  height: 26px;
+  margin-left: -48px;
+  transform: rotate(-4deg);
+}
+
+/* สติกเกอร์วงกลม */
+.sticker {
+  position: absolute;
+  right: -10px;
+  top: -18px;
+  z-index: 3;
+  width: 64px;
+  height: 64px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  border-radius: 50%;
+  background: var(--pink);
+  color: var(--ink);
+  font-family: var(--hand);
+  font-weight: 600;
+  font-size: 14px;
+  line-height: 1.1;
+  transform: rotate(12deg);
+  box-shadow: 0 3px 0 rgba(34, 48, 90, 0.15);
+}
+
+/* ปุ่มหลัก: ชมพู เงาแข็ง */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 48px;
+  padding: 0 22px;
+  border-radius: 8px;
+  background: var(--pink);
+  color: var(--ink);
+  box-shadow: 3px 3px 0 var(--ink);
+  font-family: var(--display);
+  font-weight: 600;
+  font-size: 16px;
+  text-decoration: none;
+  transition: transform 0.12s, box-shadow 0.12s;
+}
+
+.btn:hover {
+  transform: translate(-1px, -1px);
+  box-shadow: 4px 4px 0 var(--ink);
+}
+
+.btn:active {
+  transform: translate(2px, 2px);
+  box-shadow: 1px 1px 0 var(--ink);
+}
+
+.btn-outline {
+  background: var(--card);
+  border: 1.5px solid var(--ink);
+  box-shadow: 2px 2px 0 var(--ink);
+}
+
+.btn svg {
+  flex: none;
+}
+
+/* ลิงก์ลายมือสีฟ้า */
+.hand-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 44px;
+  font-family: var(--hand);
+  font-weight: 600;
+  font-size: 16px;
+  color: var(--sky-deep);
+  text-underline-offset: 4px;
+}
+
+/* ปุ่มกรอง */
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.chip {
+  min-height: 44px;
+  padding: 0 18px;
+  border: 1.5px solid var(--line);
+  border-radius: 8px;
+  background: var(--card);
+  color: var(--ink);
+  font-family: var(--display);
+  font-weight: 500;
+  font-size: 15px;
+  cursor: pointer;
+}
+
+.chip:hover {
+  border-color: var(--ink);
+}
+
+.chip[aria-pressed="true"] {
+  background: var(--pink-soft);
+  border-color: var(--ink);
+  box-shadow: 2px 2px 0 var(--ink);
+  font-weight: 600;
+}
+
+/* กล่องเส้นประตอนไม่มีรายการ */
+.empty-box {
+  margin: 0;
+  padding: 28px 20px;
+  border: 2px dashed var(--line);
+  border-radius: 12px;
+  text-align: center;
+  font-family: var(--hand);
+  color: var(--muted);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .btn {
+    transition: none;
+  }
+
+  .btn:hover,
+  .btn:active {
+    transform: none;
+  }
 }
