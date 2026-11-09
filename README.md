@@ -21,12 +21,19 @@ src/
   Home.js         หน้าหลัก (hero + โปรไฟล์ศิลปิน + งานถัดไป)
   Event.js        กิจกรรม
   Ticket.js       ตั๋วกิจกรรม ใช้ร่วมกันในหน้าหลักและหน้ากิจกรรม
+  data/countdown.js นับถอยหลังถึงงานถัดไป (อ่านเวลาเริ่มจากบรรทัดแรกของ schedule ตามเวลาไทย)
   Work.js         วิดีโอ (คลิป YouTube)
   Support.js      ซัพพอร์ต (OPC, TikTok และ X แฟนคลับ)
   GameHub.js      หน้ารวมเกม
   NaamtokGame.js  เกมน้ำตกไม่ผัก (logic อยู่ใน game/naamtok.js)
-  NextGirlsGame.js  เกม Journey to Next Girls (logic อยู่ใน game/nextGirls.js)
+  NextGirlsGame.js  เกม Stage Runner (logic อยู่ใน game/nextGirls.js · URL และ key ข้อมูลยังเป็น next-girls)
   game/           logic เกม, pixel art ที่ใช้ร่วมกัน (pixel.js) และสถิติ/แชร์ (shared.js)
+  Leaderboard.js  ตารางอันดับรวม + ช่องลงชื่อหลังจบรอบ (คุยกับ api/scores.js)
+  QuizGame.js     ควิซ "รู้จักน้องการ์ตูนแค่ไหน?" (คำถามสร้างจาก artist.json / videos.json ใน game/quiz.js)
+  FanCardMaker.js ทำบัตรแฟนคลับ บันทึกเป็นรูป 1080 × 1920 (วาดใน game/fanCard.js)
+  RunHistory.js   ประวัติ 5 รอบล่าสุดในเครื่อง
+api/
+  scores.js       Vercel Function ของตารางอันดับรวม เก็บใน Upstash Redis
   Footer.js       ช่องทางการติดตาม แสดงท้ายทุกหน้า
   icons.js        ไอคอนเส้นที่ใช้ในปุ่มและการ์ด
   index.css       สี ฟอนต์ และคอมโพเนนต์ที่ใช้ทุกหน้า (เทปกาว, สติกเกอร์, ปุ่ม)
@@ -56,3 +63,16 @@ public/images/    รูปภาพ
 npm version patch --no-git-tag-version   # 1.0.0 → 1.0.1 แก้เล็กน้อย
 npm version minor --no-git-tag-version   # 1.0.0 → 1.1.0 เพิ่มส่วนใหม่
 ```
+
+## ตารางอันดับเกม
+
+ตารางอันดับรวม (ทุกคนเห็นเหมือนกัน) ใช้ `api/scores.js` บน Vercel เก็บข้อมูลใน Upstash Redis
+
+1. Vercel → โปรเจกต์นี้ → **Storage** → **Create Database** → **Upstash for Redis** (แผนฟรีพอ) → Connect กับโปรเจกต์
+2. Vercel จะใส่ `KV_REST_API_URL` และ `KV_REST_API_TOKEN` ให้เอง (หรือใช้ `UPSTASH_REDIS_REST_URL` / `UPSTASH_REDIS_REST_TOKEN` ก็ได้)
+3. Redeploy แล้วตารางอันดับจะใช้งานได้
+
+- เก็บแค่ชื่อเล่น (ไม่เกิน 16 ตัวอักษร) กับคะแนน ชื่อเดิมเก็บเฉพาะคะแนนที่ดีที่สุด
+- ส่งได้ 5 ครั้งต่อนาทีต่อ IP เป็นตารางเล่นสนุก ไม่ได้กันโกงจริงจัง
+- ลบชื่อที่ไม่เหมาะสมได้จาก Upstash Console: `ZREM leaderboard:naamtok <ชื่อ>` (หรือ `leaderboard:next-girls`)
+- ตอนรัน `npm start` ในเครื่องจะไม่มี `/api` ตารางจะขึ้นว่า "ยังโหลดตารางอันดับไม่ได้" ซึ่งเป็นปกติ

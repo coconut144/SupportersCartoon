@@ -78,7 +78,7 @@ test('หน้ารวมเกมมีลิงก์ไปทั้งส�
   window.history.pushState({}, '', '/game');
   render(<App />);
   expect(screen.getByRole('link', { name: /น้ำตกไม่ผัก/ })).toHaveAttribute('href', '/game/naamtok');
-  expect(screen.getByRole('link', { name: /Journey to Next Girls/ })).toHaveAttribute('href', '/game/next-girls');
+  expect(screen.getByRole('link', { name: /Stage Runner/ })).toHaveAttribute('href', '/game/next-girls');
 });
 
 test('เกมน้ำตกไม่ผักเริ่มเล่นได้ และแสดงคะแนนกับจำนวนครั้งที่พลาด', () => {
@@ -91,11 +91,71 @@ test('เกมน้ำตกไม่ผักเริ่มเล่นไ�
   expect(screen.getByLabelText('พลาด 0 จาก 3 ชาม')).toBeInTheDocument();
 });
 
-test('เกม Journey to Next Girls เริ่มวิ่งได้ และแสดงระยะกับหัวใจ', () => {
+test('เกม Stage Runner เริ่มวิ่งได้ และแสดงระยะกับหัวใจ', () => {
   window.history.pushState({}, '', '/game/next-girls');
   render(<App />);
-  expect(screen.getByRole('heading', { name: 'Journey to Next Girls' })).toBeInTheDocument();
+  expect(screen.getByRole('heading', { name: 'Stage Runner' })).toBeInTheDocument();
   fireEvent.click(screen.getByRole('button', { name: 'เริ่มวิ่ง' }));
   expect(screen.queryByRole('button', { name: 'เริ่มวิ่ง' })).not.toBeInTheDocument();
   expect(screen.getByLabelText('เก็บหัวใจได้ 0 ดวง')).toBeInTheDocument();
+});
+
+test('หน้ารวมเกมมีควิซและบัตรแฟนคลับด้วย', () => {
+  window.history.pushState({}, '', '/game');
+  render(<App />);
+  expect(screen.getByRole('link', { name: /รู้จักน้องการ์ตูนแค่ไหน/ })).toHaveAttribute('href', '/game/quiz');
+  expect(screen.getByRole('link', { name: /ทำบัตรแฟนคลับ/ })).toHaveAttribute('href', '/game/card');
+});
+
+test('ควิซเล่นได้ครบ 10 ข้อแล้วได้ระดับแฟน', () => {
+  window.history.pushState({}, '', '/game/quiz');
+  render(<App />);
+  fireEvent.click(screen.getByRole('button', { name: 'เริ่มควิซ' }));
+  for (let i = 0; i < 10; i += 1) {
+    expect(screen.getByText(new RegExp(`^ข้อ ${i + 1}/10`))).toBeInTheDocument();
+    const group = screen.getByRole('group', { name: 'ตัวเลือก' });
+    fireEvent.click(within(group).getAllByRole('button')[0]);
+    fireEvent.click(screen.getByRole('button', { name: i < 9 ? 'ข้อต่อไป' : 'ดูผล' }));
+  }
+  expect(screen.getByText(/คุณตอบถูก \d+ จาก 10 ข้อ/)).toBeInTheDocument();
+  expect(screen.getByRole('button', { name: 'แชร์ผล' })).toBeInTheDocument();
+});
+
+test('ทำบัตรแฟนคลับ: ต้องใส่ชื่อก่อน แล้วได้เลขสมาชิก', () => {
+  window.localStorage.clear();
+  window.history.pushState({}, '', '/game/card');
+  render(<App />);
+  fireEvent.click(screen.getByRole('button', { name: 'ทำบัตร' }));
+  expect(screen.getByRole('alert')).toHaveTextContent('ใส่ชื่อเล่นก่อนนะ');
+  fireEvent.change(screen.getByLabelText('ชื่อเล่นที่จะอยู่บนบัตร'), { target: { value: 'มิว' } });
+  fireEvent.click(screen.getByRole('button', { name: 'ทำบัตร' }));
+  expect(screen.getByText(/เลขสมาชิก FC-\d{4}/)).toBeInTheDocument();
+  expect(screen.getByRole('button', { name: 'อัปเดตบัตร' })).toBeInTheDocument();
+});
+
+test('แต่งตัวน้องในบัตรได้ เลือกได้หมวดละหนึ่งอย่าง', () => {
+  window.localStorage.clear();
+  window.history.pushState({}, '', '/game/card');
+  render(<App />);
+  fireEvent.change(screen.getByLabelText('ชื่อเล่นที่จะอยู่บนบัตร'), { target: { value: 'มิว' } });
+  fireEvent.click(screen.getByRole('button', { name: 'ทำบัตร' }));
+
+  const item = screen.getByRole('radiogroup', { name: 'ของในมือ' });
+  expect(within(item).getByRole('radio', { name: 'ไม่มี' })).toHaveAttribute('aria-checked', 'true');
+  fireEvent.click(within(item).getByRole('radio', { name: 'แท่งไฟ' }));
+  expect(within(item).getByRole('radio', { name: 'แท่งไฟ' })).toHaveAttribute('aria-checked', 'true');
+  expect(within(item).getByRole('radio', { name: 'ไม่มี' })).toHaveAttribute('aria-checked', 'false');
+  expect(JSON.parse(window.localStorage.getItem('fan-card')).look.item).toBe('lightstick');
+});
+
+test('สแกน QR แล้วได้หน้าคำอวยพร ทักชื่อเจ้าของบัตร และสุ่มใหม่ได้', () => {
+  window.history.pushState({}, '', '/wish?to=' + encodeURIComponent('มิว') + '&no=0042');
+  render(<App />);
+  expect(screen.getByText('มิว')).toBeInTheDocument();
+  expect(screen.getByText(/FC-0042/)).toBeInTheDocument();
+  const before = document.querySelector('.wish-text').textContent;
+  expect(before).toMatch(/^ขอให้/);
+  fireEvent.click(screen.getByRole('button', { name: 'สุ่มอีกใบ' }));
+  expect(document.querySelector('.wish-text').textContent).not.toBe(before);
+  expect(screen.getByRole('link', { name: 'ทำบัตรของคุณบ้าง' })).toHaveAttribute('href', '/game/card');
 });

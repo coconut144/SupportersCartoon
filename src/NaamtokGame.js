@@ -3,9 +3,20 @@ import './Game.css';
 import React, { useCallback, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { W, H, MAX_MISSES, GOLDEN_POINTS, createState, start, update, tap, render } from './game/naamtok';
-import { SITE_URL, readBest, saveBest, shareScore, useGameLoop } from './game/shared';
+import { SITE_URL, readBest, saveBest, readHistory, addRun, shareScore, useGameLoop } from './game/shared';
+import { RES } from './game/pixel';
+import RunHistory from './RunHistory';
+import Leaderboard from './Leaderboard';
 
 const BEST_KEY = 'naamtok-best';
+const GAME = 'naamtok';
+
+// ข้อความใต้คะแนนตอนจบเกม: สถิติใหม่ > ติดอันดับ 3 ของรอบล่าสุด (และไม่ใช่รอบที่แย่สุด) > สถิติเดิม
+function rankNote(score, best, rank, kept) {
+  if (score > 0 && score >= best) return 'สถิติใหม่!';
+  if (rank && rank <= 3 && rank < kept) return `ดีอันดับ ${rank} จาก ${kept} รอบล่าสุด`;
+  return `สถิติของคุณ ${best} คะแนน`;
+}
 
 function NaamtokGame() {
   const canvasRef = useRef(null);
@@ -15,6 +26,9 @@ function NaamtokGame() {
   const [misses, setMisses] = useState(0);
   const [best, setBest] = useState(() => readBest(BEST_KEY));
   const [shareNote, setShareNote] = useState('');
+  const [history, setHistory] = useState(() => readHistory(GAME));
+  const [rank, setRank] = useState(null);
+  const [pending, setPending] = useState(null); // รอบที่จบแล้วแต่ยังไม่ได้ลงชื่อในตารางอันดับ
 
   useGameLoop(canvasRef, stateRef, {
     step: (state, dt) => update(state, dt),
@@ -24,6 +38,10 @@ function NaamtokGame() {
       setMisses(state.misses);
       if (state.phase === 'over' && phase === 'playing') {
         setPhase('over');
+        const saved = addRun(GAME, { score: state.score });
+        setHistory(saved.history);
+        setRank(saved.rank);
+        setPending(state.score > 0 ? { score: state.score, id: saved.history.runs[0].at } : null);
         if (state.score > best) {
           saveBest(BEST_KEY, state.score);
           setBest(state.score);
@@ -35,6 +53,7 @@ function NaamtokGame() {
   const handleStart = () => {
     start(stateRef.current);
     setShareNote('');
+    setPending(null);
     setPhase('playing');
   };
 
@@ -53,9 +72,9 @@ function NaamtokGame() {
   return (
     <section className="section game">
       <h1 className="visually-hidden">เกมน้ำตกไม่ผัก</h1>
-      <Link to="/game" className="game-back">← เกมทั้งหมด</Link>
+      <Link to="/game" className="hand-link game-back">← เกมทั้งหมด</Link>
 
-      <div className="game-hud" aria-live="polite">
+      <div className="sheet game-hud" aria-live="polite">
         <span>คะแนน <strong>{score}</strong></span>
         <span className="game-lives" aria-label={`พลาด ${misses} จาก ${MAX_MISSES} ชาม`}>
           {Array.from({ length: MAX_MISSES }, (_, i) => (
@@ -65,10 +84,11 @@ function NaamtokGame() {
       </div>
 
       <div className="game-stage">
+        <span className="tape tape-center" aria-hidden="true" />
         <canvas
           ref={canvasRef}
-          width={W}
-          height={H}
+          width={W * RES}
+          height={H * RES}
           className="game-canvas"
           style={{ aspectRatio: `${W} / ${H}` }}
           onPointerDown={handlePointer}
@@ -94,9 +114,7 @@ function NaamtokGame() {
           <div className="game-panel">
             <h2>หมดเวลาเสิร์ฟ</h2>
             <p className="game-final">{score} คะแนน</p>
-            <p className="game-best">
-              {score > 0 && score >= best ? 'สถิติใหม่!' : `สถิติของคุณ ${best} คะแนน`}
-            </p>
+            <p className="game-best">{rankNote(score, best, rank, history.runs.length)}</p>
             <div className="game-actions">
               <button type="button" className="game-btn" onClick={handleStart}>เล่นอีกครั้ง</button>
               <button type="button" className="game-btn game-btn-secondary" onClick={handleShare}>แชร์คะแนน</button>
@@ -105,6 +123,10 @@ function NaamtokGame() {
           </div>
         )}
       </div>
+
+      <Leaderboard game={GAME} pending={pending} onSubmitted={() => setPending(null)} />
+
+      <RunHistory history={history} />
     </section>
   );
 }

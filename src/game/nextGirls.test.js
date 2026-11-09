@@ -1,4 +1,4 @@
-import { createState, start, update, jump, scoreOf, metersOf, GROUND_Y, HEART_POINTS } from './nextGirls';
+import { createState, start, update, jump, releaseJump, scoreOf, metersOf, GROUND_Y, HEART_POINTS, JUMP_BUFFER } from './nextGirls';
 
 const fixedRng = () => 0.5;
 
@@ -59,4 +59,73 @@ test('ของใหม่โผล่มาเองเมื่อวิ่�
     update(state, 0.02, fixedRng);
   }
   expect(state.obstacles.length + state.pickups.length + state.hearts).toBeGreaterThan(0);
+});
+
+// กระโดด 1 ครั้งจนลงพื้น คืนจุดสูงสุด (y น้อยสุด) และเวลาที่ลอย
+function airborne(state, { holdFor = 0 } = {}) {
+  const dt = 0.01;
+  let top = state.y;
+  let t = 0;
+  jump(state);
+  if (holdFor === 0) releaseJump(state);
+  while (!state.onGround && t < 3) {
+    if (holdFor > 0 && t >= holdFor) releaseJump(state);
+    update(state, dt, fixedRng);
+    top = Math.min(top, state.y);
+    t += dt;
+  }
+  return { height: GROUND_Y - 22 - top, time: t };
+}
+
+test('แตะครั้งเดียวกระโดดสูงเท่าเดิม กดค้างกระโดดได้สูงและนานกว่า', () => {
+  const tap = airborne(playing());
+  const hold = airborne(playing(), { holdFor: 1 });
+  expect(tap.height).toBeGreaterThan(30);
+  expect(tap.height).toBeLessThan(36);
+  expect(hold.height).toBeGreaterThan(tap.height + 10);
+  expect(hold.time).toBeGreaterThan(tap.time);
+  // กดค้างนานแค่ไหนก็ไม่หลุดขอบบนของฉาก
+  expect(GROUND_Y - 22 - hold.height).toBeGreaterThanOrEqual(0);
+});
+
+test('ปล่อยกลางทางได้ความสูงระหว่างแตะกับกดค้างสุด', () => {
+  const tap = airborne(playing());
+  const half = airborne(playing(), { holdFor: 0.1 });
+  const full = airborne(playing(), { holdFor: 1 });
+  expect(half.height).toBeGreaterThan(tap.height);
+  expect(half.height).toBeLessThan(full.height);
+});
+
+test('กดก่อนลงพื้นเล็กน้อย กระโดดต่อทันทีที่ลงถึงพื้น', () => {
+  const state = playing();
+  jump(state);
+  releaseJump(state);
+  // ตกลงมาจนเกือบถึงพื้น
+  while (state.vy <= 0 || state.y < GROUND_Y - 22 - 3) update(state, 0.01, fixedRng);
+  expect(jump(state)).toBe(false); // ยังอยู่กลางอากาศ จึงจำไว้ก่อน
+  releaseJump(state);
+  for (let i = 0; i < 10 && state.onGround === false && state.vy >= 0; i += 1) update(state, 0.01, fixedRng);
+  expect(state.vy).toBeLessThan(0); // เด้งขึ้นใหม่แล้วโดยไม่ต้องกดซ้ำ
+});
+
+test('กดตอนยังลอยสูงอยู่ ไม่นับเป็นการกดล่วงหน้า', () => {
+  const state = playing();
+  jump(state);
+  releaseJump(state);
+  update(state, 0.05, fixedRng);
+  jump(state); // กดตอนเพิ่งลอยขึ้น ห่างจากพื้นนานกว่า JUMP_BUFFER มาก
+  releaseJump(state);
+  for (let i = 0; i < 200 && !state.onGround; i += 1) update(state, 0.01, fixedRng);
+  expect(state.onGround).toBe(true);
+  update(state, JUMP_BUFFER, fixedRng);
+  expect(state.onGround).toBe(true);
+});
+
+test('มีฝุ่นตอนกระโดดและตอนลงพื้น แล้วหายไปเอง', () => {
+  const state = playing();
+  jump(state);
+  expect(state.dust.length).toBeGreaterThan(0);
+  releaseJump(state);
+  for (let i = 0; i < 300 && state.dust.length; i += 1) update(state, 0.01, fixedRng);
+  expect(state.dust).toHaveLength(0);
 });

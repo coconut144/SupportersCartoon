@@ -1,7 +1,7 @@
 // เกม "น้ำตกไม่ผัก": ชามก๋วยเตี๋ยวไหลมาบนสายพาน แตะเขี่ยผักออกก่อนถึงน้องการ์ตูน
 // แยก logic (createState / update / tap) ออกจากการวาด (render) เพื่อให้เทสต์ได้โดยไม่ต้องมี canvas
 
-import { cartoonRows, drawSprite } from './pixel';
+import { beginFrame, cartoonRows, drawSprite } from './pixel';
 
 // ฉากเล็กแล้วขยายเต็มความกว้างจอ ผักบนมือถือจะใหญ่พอให้ใช้นิ้วแตะได้
 export const W = 120;
@@ -193,23 +193,132 @@ export function tap(state, x, y, rng = Math.random) {
 }
 
 // ================== การวาด (pixel art) ==================
+// sprite ของในชามออกแบบละเอียด 12 × 10 จุด วาดที่ scale 0.5 จึงกินที่เท่าเดิม (ITEM_W × ITEM_H)
 
 const ITEMS = {
-  cilantro: ['.g..g.', 'gGggGg', '.gGGg.', '..G...', '..G...'],
-  scallion: ['.GGGG.', 'Gg..gG', 'Gg..gG', '.GGGG.', '......'],
-  morningGlory: ['G.....', '.G....', '..GG..', '...gG.', '....gG'],
-  beanSprout: ['y...y.', '.w..w.', '.w.w..', '..ww..', '..w...'],
-  basil: ['..gg..', '.gGGg.', 'gGggGg', '.gGGg.', '..G...'],
-  meatball: ['.kkkk.', 'kllkkk', 'kkkkkK', 'kkkkKK', '.KKKK.'],
-  pork: ['pppppP', 'pPPPpP', 'ppppPP', '.pppP.', '......'],
+  cilantro: [
+    '..g.....g...',
+    '.gvg...gvg..',
+    'gGgGg.gGgGg.',
+    '.gGGgGgGGg..',
+    '..gGGGGGg...',
+    '....GGG.....',
+    '.....G......',
+    '.....G......',
+    '....G.......',
+    '....G.......',
+  ],
+  scallion: [
+    '............',
+    '..GGGG......',
+    '.GvggGG.GGG.',
+    'Gg....gGGvgG',
+    'Gg....gGg..G',
+    'GGg..gGGg..G',
+    '.GGGGGG.GGG.',
+    '............',
+    '............',
+    '............',
+  ],
+  morningGlory: [
+    'G...........',
+    'GG..........',
+    '.Gg.........',
+    '..GGgg......',
+    '...GgvGg....',
+    '....gGvGg...',
+    '.....gGGvg..',
+    '......ggGg..',
+    '.......G....',
+    '........G...',
+  ],
+  beanSprout: [
+    '.yY......yY.',
+    '.yy.....yy..',
+    '..f.....f...',
+    '..f....f....',
+    '...f...f....',
+    '...f..f.....',
+    '....f.f.....',
+    '....ff......',
+    '.....f......',
+    '............',
+  ],
+  basil: [
+    '.....gg.....',
+    '....gvGg....',
+    '...gvgGGg...',
+    '..gvggGgGg..',
+    '..ggggGggG..',
+    '..gGggGgGg..',
+    '...gGGGGg...',
+    '....gGGg....',
+    '.....GG.....',
+    '.....G......',
+  ],
+  meatball: [
+    '....kkkk....',
+    '..kkllkkkk..',
+    '.kllllkkkkk.',
+    '.klkkkkkkkK.',
+    'kkkkkkkkkkKK',
+    'kkkkkkkkkKKK',
+    '.kkkkkkkKKK.',
+    '.kkkkkkKKKK.',
+    '..KKKKKKKK..',
+    '....KKKK....',
+  ],
+  pork: [
+    '............',
+    '.ffppppppp..',
+    'fppppppppPP.',
+    'fpppPPppppPP',
+    'fppppppPPpPP',
+    '.ppPPpppppP.',
+    '.pppppppPPP.',
+    '..PPPPPPPP..',
+    '............',
+    '............',
+  ],
 };
 
-// ชามตราไก่: ขอบเส้นเข้ม ลายขอบเขียว ไก่แดงกลางชาม ชามทองเปลี่ยนเป็นสีทองทั้งใบ
-function drawBowl(ctx, bowl) {
-  const x = Math.round(bowl.x);
-  const body = bowl.golden ? '#f4c542' : '#ffffff';
-  const band = bowl.golden ? '#c99a1e' : '#3f8a3a';
+// ไก่ลายชามตราไก่ 10 × 9 จุด
+const ROOSTER = [
+  '..aa......',
+  '.aaaa.....',
+  '.axaaA....',
+  'AAaaaa..aa',
+  '..aaaaaaa.',
+  '..aaaaaaaa',
+  '...aaaaaa.',
+  '....A.A...',
+  '...AA.AA..',
+];
 
+const LEAF = [
+  '..GG..',
+  '.GgvG.',
+  'GggGgG',
+  '.GGgG.',
+  '...G..',
+];
+
+const half = (ctx, color, x, y, w, h) => {
+  ctx.fillStyle = color;
+  ctx.fillRect(x, y, w, h);
+};
+
+// ชามตราไก่: ขอบดำ ลายคาดเขียว 2 เส้น ไก่แดง ใบไม้ เงาด้านขวา ชามทองเปลี่ยนเป็นสีทองทั้งใบ
+function drawBowl(ctx, bowl, time) {
+  const x = Math.round(bowl.x * 2) / 2;
+  const body = bowl.golden ? '#f4c542' : '#ffffff';
+  const shade = bowl.golden ? '#d9a520' : '#e7e2da';
+  const band = bowl.golden ? '#b8860b' : '#3f8a3a';
+
+  // เงาใต้ชาม
+  half(ctx, 'rgba(42, 36, 32, 0.25)', x + 6, RIM_Y + 15.5, BOWL_W - 12, 1);
+
+  // ขอบนอกสีเข้ม
   ctx.fillStyle = '#2a2420';
   ctx.fillRect(x - 1, RIM_Y - 1, BOWL_W + 2, 2);
   for (let i = 1; i < 14; i += 1) {
@@ -218,81 +327,123 @@ function drawBowl(ctx, bowl) {
   }
   ctx.fillRect(x + 9, RIM_Y + 14, BOWL_W - 18, 2);
 
+  // ตัวชาม: แต่ละแถวมีเงาด้านขวา
   for (let i = 0; i < 14; i += 1) {
     const inset = Math.floor(i / 3);
-    ctx.fillStyle = i === 2 || i === 11 ? band : body;
-    ctx.fillRect(x + inset, RIM_Y + i, BOWL_W - inset * 2, 1);
+    const rowW = BOWL_W - inset * 2;
+    const isBand = i === 2 || i === 11;
+    half(ctx, isBand ? band : body, x + inset, RIM_Y + i, rowW, 1);
+    if (!isBand) half(ctx, shade, x + inset + rowW - 4, RIM_Y + i, 4, 1);
   }
-  ctx.fillStyle = bowl.golden ? '#c99a1e' : '#e6ddd1';
-  ctx.fillRect(x + 10, RIM_Y + 14, BOWL_W - 20, 1);
+  // ลายจุดบนเส้นคาด
+  ctx.fillStyle = bowl.golden ? '#fff2b0' : '#b6e39a';
+  for (let dx = 3; dx < BOWL_W - 3; dx += 3) ctx.fillRect(x + dx, RIM_Y + 2.25, 0.5, 0.5);
+  // ฐานชาม
+  half(ctx, bowl.golden ? '#c99a1e' : '#d8d0c4', x + 10, RIM_Y + 14, BOWL_W - 20, 1);
+  // แสงสะท้อนซ้าย
+  half(ctx, bowl.golden ? '#fff2b0' : '#ffffff', x + 1.5, RIM_Y + 4, 0.5, 5);
 
   if (bowl.golden) {
-    ctx.fillStyle = '#fff2b0';
-    ctx.fillRect(x + 5, RIM_Y + 4, 2, 1);
-    ctx.fillRect(x + 5, RIM_Y + 5, 1, 2);
+    // ประกายบนชามทอง กระพริบตามเวลา
+    const on = Math.floor(time * 4) % 2 === 0;
+    ctx.fillStyle = '#fff8d6';
+    ctx.fillRect(x + 6, RIM_Y + 4, 2, 0.5);
+    ctx.fillRect(x + 6.75, RIM_Y + 3.25, 0.5, 2);
+    if (on) {
+      ctx.fillRect(x + 25, RIM_Y + 7, 1.5, 0.5);
+      ctx.fillRect(x + 25.5, RIM_Y + 6.5, 0.5, 1.5);
+    }
   } else {
-    ctx.fillStyle = '#c8475f';
-    ctx.fillRect(x + 8, RIM_Y + 6, 3, 3);
-    ctx.fillRect(x + 11, RIM_Y + 5, 1, 2);
-    ctx.fillStyle = '#3f8a3a';
-    ctx.fillRect(x + 20, RIM_Y + 6, 4, 2);
-    ctx.fillRect(x + 22, RIM_Y + 5, 1, 1);
+    drawSprite(ctx, ROOSTER, x + 6, RIM_Y + 4, 0.5);
+    drawSprite(ctx, LEAF, x + 19, RIM_Y + 5, 0.5);
+    drawSprite(ctx, LEAF, x + 22, RIM_Y + 6.5, 0.5);
   }
 
-  // น้ำซุปและเส้น
-  ctx.fillStyle = '#8a4a26';
-  ctx.fillRect(x + 2, RIM_Y - 1, BOWL_W - 4, 1);
+  // น้ำซุปข้นสีเข้ม เส้นเล็กสีครีม และน้ำมันพริกจุด ๆ
+  half(ctx, '#7a3b1e', x + 1, RIM_Y - 1, BOWL_W - 2, 1);
+  half(ctx, '#9c5128', x + 2, RIM_Y - 1, BOWL_W - 4, 0.5);
   ctx.fillStyle = '#f3e2b8';
-  [5, 12, 19, 26].forEach((dx) => ctx.fillRect(x + dx, RIM_Y - 1, 3, 1));
+  [4, 9.5, 15, 21, 26.5].forEach((dx) => {
+    ctx.fillRect(x + dx, RIM_Y - 1, 3, 0.5);
+    ctx.fillRect(x + dx + 1, RIM_Y - 0.5, 2, 0.5);
+  });
+  ctx.fillStyle = '#d6453d';
+  [7, 18, 29].forEach((dx) => ctx.fillRect(x + dx, RIM_Y - 1, 0.5, 0.5));
 
   if (bowl.flash > 0) {
-    ctx.fillStyle = 'rgba(200, 71, 95, 0.45)';
-    ctx.fillRect(x, RIM_Y - 9, BOWL_W, BOWL_H + 9);
+    half(ctx, 'rgba(200, 71, 95, 0.45)', x, RIM_Y - 9, BOWL_W, BOWL_H + 9);
   }
 
   // ผักที่เพิ่งงอกจะเด้งขึ้นจากชามก่อน แล้วค่อยลงที่
   bowl.items.forEach((item) => {
     const lift = item.pop > 0 ? Math.round(item.pop * 10) : 0;
-    drawSprite(ctx, ITEMS[item.kind], x + item.dx, RIM_Y + item.dy - lift);
+    drawSprite(ctx, ITEMS[item.kind], x + item.dx, RIM_Y + item.dy - lift, 0.5);
+  });
+}
+
+// ไอน้ำลอยขึ้นจากป้ายร้าน เคลื่อนขึ้นลงตามเวลา
+function drawSteam(ctx, time) {
+  ctx.fillStyle = 'rgba(255, 255, 255, 0.8)';
+  [24, 30, 36].forEach((sx, i) => {
+    const phase = time * 2 + i;
+    for (let k = 0; k < 3; k += 1) {
+      const wiggle = Math.round(Math.sin(phase + k) * 2) / 2;
+      ctx.fillRect(sx + wiggle, 12.5 - k * 1.5, 0.5, 1);
+    }
   });
 }
 
 export function render(ctx, state) {
-  ctx.imageSmoothingEnabled = false;
+  beginFrame(ctx);
+  const { time } = state;
 
-  // ผนังไม้โทนอุ่น ให้ชามสีขาวเด่นขึ้น
-  ctx.fillStyle = '#d9b98f';
-  ctx.fillRect(0, 0, W, H);
-  ctx.fillStyle = '#c9a57a';
-  for (let y = 12; y < BELT_Y; y += 12) ctx.fillRect(0, y, W, 1);
+  // ผนังไม้: แผ่นไม้แนวนอน มีลายไม้และตะปู
+  half(ctx, '#d9b98f', 0, 0, W, BELT_Y);
+  for (let y = 0; y < BELT_Y; y += 12) {
+    half(ctx, '#c9a57a', 0, y + 11.5, W, 0.5);
+    half(ctx, '#e4c9a3', 0, y, W, 0.5);
+    ctx.fillStyle = '#c4a073';
+    for (let gx = (y * 7) % 23; gx < W; gx += 23) ctx.fillRect(gx, y + 5, 6, 0.5);
+    ctx.fillStyle = '#8a6a48';
+    ctx.fillRect(3, y + 2, 0.5, 0.5);
+    ctx.fillRect(W - 4, y + 2, 0.5, 0.5);
+  }
 
-  // ป้ายร้าน
-  ctx.fillStyle = '#6e4a2e';
-  ctx.fillRect(16, 4, 1, 6);
-  ctx.fillRect(43, 4, 1, 6);
-  ctx.fillStyle = '#c8475f';
-  ctx.fillRect(10, 10, 40, 14);
-  ctx.fillStyle = '#ffffff';
-  ctx.fillRect(20, 15, 20, 2);
-  ctx.fillRect(22, 17, 16, 2);
-  ctx.fillRect(25, 19, 10, 2);
-  ctx.fillRect(25, 12, 1, 2);
-  ctx.fillRect(30, 11, 1, 3);
-  ctx.fillRect(35, 12, 1, 2);
+  // ป้ายร้าน "ก๋วยเตี๋ยว": แขวนเชือก ขอบทอง รูปชามมีไอน้ำ
+  half(ctx, '#6e4a2e', 16, 2, 0.5, 8);
+  half(ctx, '#6e4a2e', 43.5, 2, 0.5, 8);
+  half(ctx, '#8a2e3f', 9.5, 9.5, 41, 15);
+  half(ctx, '#c8475f', 10, 10, 40, 14);
+  half(ctx, '#f4c542', 11, 11, 38, 0.5);
+  half(ctx, '#f4c542', 11, 22.5, 38, 0.5);
+  half(ctx, '#ffffff', 20, 15, 20, 2);
+  half(ctx, '#ffffff', 22, 17, 16, 2);
+  half(ctx, '#ffffff', 25, 19, 10, 1.5);
+  half(ctx, '#e7e2da', 36, 15, 4, 2);
+  drawSteam(ctx, time);
 
   // น้องการ์ตูน (วาดก่อนสายพาน ให้สายพานบังช่วงล่าง)
-  drawSprite(ctx, cartoonRows(state.face), CARTOON_X, BELT_Y - 36, 2);
+  drawSprite(ctx, cartoonRows(state.face), CARTOON_X, BELT_Y - 34, 1);
 
-  // เคาน์เตอร์และสายพาน
-  ctx.fillStyle = '#8a5a34';
-  ctx.fillRect(0, BELT_Y + 8, W, H - BELT_Y - 8);
-  ctx.fillStyle = '#74492a';
-  for (let y = BELT_Y + 14; y < H; y += 10) ctx.fillRect(0, y, W, 1);
-  ctx.fillStyle = '#4a4440';
-  ctx.fillRect(0, BELT_Y, W, 8);
-  ctx.fillStyle = '#5f5852';
-  for (let x = -8 + state.beltOffset; x < W; x += 8) ctx.fillRect(Math.round(x), BELT_Y + 1, 3, 6);
+  // เคาน์เตอร์ไม้
+  half(ctx, '#8a5a34', 0, BELT_Y + 8, W, H - BELT_Y - 8);
+  half(ctx, '#a06c42', 0, BELT_Y + 8, W, 1);
+  for (let y = BELT_Y + 14; y < H; y += 10) {
+    half(ctx, '#74492a', 0, y, W, 0.5);
+    ctx.fillStyle = '#7d5030';
+    for (let gx = (y * 5) % 19; gx < W; gx += 19) ctx.fillRect(gx, y + 4, 5, 0.5);
+  }
 
-  state.bowls.forEach((bowl) => drawBowl(ctx, bowl));
-  state.particles.forEach((p) => drawSprite(ctx, ITEMS[p.kind], p.x, p.y));
+  // สายพาน: ยางดำ มีลูกกลิ้งเลื่อนตามความเร็ว และขอบโลหะ
+  half(ctx, '#3a3532', 0, BELT_Y, W, 8);
+  half(ctx, '#8d8680', 0, BELT_Y, W, 0.5);
+  half(ctx, '#2a2420', 0, BELT_Y + 7.5, W, 0.5);
+  for (let bx = -8 + state.beltOffset; bx < W; bx += 8) {
+    const rx = Math.round(bx * 2) / 2;
+    half(ctx, '#5f5852', rx, BELT_Y + 1.5, 3, 5);
+    half(ctx, '#7a736c', rx, BELT_Y + 1.5, 3, 0.5);
+  }
+
+  state.bowls.forEach((bowl) => drawBowl(ctx, bowl, time));
+  state.particles.forEach((p) => drawSprite(ctx, ITEMS[p.kind], p.x, p.y, 0.5));
 }

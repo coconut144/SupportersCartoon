@@ -121,8 +121,35 @@
 /* ================== Sections ================== */
 
 .home-more {
-  margin: 10px 0 0;
-  text-align: right;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 4px 16px;
+  margin-top: 14px;
+}
+
+.home-more .hand-link {
+  margin-left: auto;
+}
+
+/* นับถอยหลังเป็นป้ายลายมือเอียงนิด ๆ วันที่มีงานเป็นสีชมพู */
+.countdown {
+  margin: 0;
+  padding: 4px 12px;
+  border: 2px dashed var(--line);
+  border-radius: 8px;
+  background: var(--card);
+  font-family: var(--hand);
+  font-weight: 600;
+  font-size: 17px;
+  transform: rotate(-1.5deg);
+}
+
+.countdown.is-today {
+  border-color: var(--pink);
+  background: var(--pink-soft);
+  color: var(--pink-deep);
 }
 
 /* ข้อมูลส่วนตัวเขียนบนกระดาษมีเส้นบรรทัด (เส้นใต้แต่ละแถว จึงตรงเสมอแม้ข้อความขึ้นสองบรรทัด) */

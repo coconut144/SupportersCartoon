@@ -1,9 +1,10 @@
 import './Home.css';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import artist from './data/artist.json';
 import { upcoming } from './data/events';
 import { formatDate } from './data/format';
+import { countdownOf } from './data/countdown';
 import Ticket from './Ticket';
 import { ArrowRight } from './icons';
 
@@ -21,6 +22,34 @@ const memberNo = new URL(artist.source.url).searchParams.get('memberId');
 const birthday = artist.birthDate.split('-').reverse().join('.');
 
 const next = upcoming[0];
+
+// นาฬิกาที่อัปเดตทุก 30 วินาที พอสำหรับนับถอยหลังระดับนาที
+function useNow(intervalMs = 30000) {
+  const [now, setNow] = useState(() => new Date());
+  useEffect(() => {
+    const timer = setInterval(() => setNow(new Date()), intervalMs);
+    return () => clearInterval(timer);
+  }, [intervalMs]);
+  return now;
+}
+
+// การ์ดงานถัดไป: นับถอยหลังถึงเวลาเริ่ม วันที่มีงานสติกเกอร์เปลี่ยนเป็น "วันนี้!"
+function NextEvent({ event }) {
+  const countdown = countdownOf(event, useNow());
+  return (
+    <>
+      <Ticket event={event} sticker={countdown && countdown.isToday ? 'วันนี้!' : 'ไปกัน!'} />
+      <div className="home-more">
+        {countdown && (
+          <p className={`countdown${countdown.isToday ? ' is-today' : ''}`}>
+            <span aria-hidden="true">⏳</span> {countdown.text}
+          </p>
+        )}
+        <Link to="/event" className="hand-link">ดูตั๋วทั้งหมด <ArrowRight /></Link>
+      </div>
+    </>
+  );
+}
 
 function Home() {
   return (
@@ -66,10 +95,7 @@ function Home() {
       {next && (
         <section aria-labelledby="next-title">
           <h2 className="hand-title" id="next-title">นัดเจอครั้งหน้า</h2>
-          <Ticket event={next} sticker="ไปกัน!" />
-          <p className="home-more">
-            <Link to="/event" className="hand-link">ดูตั๋วทั้งหมด <ArrowRight /></Link>
-          </p>
+          <NextEvent event={next} />
         </section>
       )}
     </div>
