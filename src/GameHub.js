@@ -29,8 +29,20 @@ const games = [
   {
     path: '/game/card',
     title: 'ทำบัตรแฟนคลับ',
-    description: 'ใส่ชื่อเล่น รับบัตร MEMBER ของตัวเอง บันทึกรูปไว้ลงสตอรี่',
+    description: 'ใส่ชื่อเล่น รับบัตร MEMBER ของตัวเอง ',
     play: 'ทำบัตรเลย →',
+  },
+  {
+    path: '/game/certificate',
+    title: 'ทำเกียรติบัตร',
+    description: 'ร่วมโปรเจกต์ซัพพอร์ตน้องแล้ว รับเกียรติบัตรผู้ร่วมโปรเจกต์ไปเก็บไว้ได้เลย',
+    play: 'ทำเกียรติบัตร →',
+  },
+  {
+    path: '/heart',
+    title: 'Heart to Heart',
+    description: 'เขียนคำอวยพรหรือกำลังใจถึงน้อง แล้วรับเกียรติบัตร Heart to Heart',
+    play: 'ส่งใจเลย →',
   },
 ];
 
