@@ -186,7 +186,7 @@ test('ทำเกียรติบัตร: กรอกข้อมูลแ
   expect(picked()).not.toBe(before);
 });
 
-test('Heart to Heart: เห็นแค่จำนวนคนที่ส่ง ส่งใจแล้วจำนวนเพิ่มและได้เกียรติบัตร', async () => {
+test('Heart to Heart: เห็นแค่จำนวนคนที่ส่ง ส่งใจแล้วจำนวนเพิ่มและได้การ์ดไว้บันทึก ไม่มีเกียรติบัตร', async () => {
   window.localStorage.clear();
   const originalFetch = global.fetch;
   global.fetch = jest.fn(async (url, options) => {
@@ -209,11 +209,46 @@ test('Heart to Heart: เห็นแค่จำนวนคนที่ส่�
     fireEvent.click(screen.getByRole('button', { name: 'ส่งใจ' }));
 
     expect(await screen.findByText('ขอบคุณที่ส่งใจถึงน้อง')).toBeInTheDocument();
+    expect(screen.getByText(/บันทึกเก็บไว้ในเครื่องได้เลย/)).toBeInTheDocument();
+    expect(screen.queryByText(/เกียรติบัตร/)).not.toBeInTheDocument();
+    expect(screen.queryByLabelText(/ใส่รูป/)).not.toBeInTheDocument();
     expect(screen.getByText(/ส่งใจมาแล้ว/)).toHaveTextContent('ส่งใจมาแล้ว 13 คน');
     expect(screen.getByRole('heading', { name: 'แก้การ์ดของคุณ' })).toBeInTheDocument();
     const sentBody = JSON.parse(global.fetch.mock.calls[1][1].body);
     expect(sentBody).toMatchObject({ name: 'มิว', message: 'สุขสันต์วันเกิด', color: 2 });
     expect(sentBody.token).toMatch(/^[A-Za-z0-9-]{16,64}$/);
+  } finally {
+    global.fetch = originalFetch;
+  }
+});
+
+test('Heart to Heart แอดมิน: ใส่รหัสแล้วเห็นการ์ดทั้งหมดตามที่แฟนคลับแต่ง รหัสผิดขึ้นข้อความ', async () => {
+  const originalFetch = global.fetch;
+  global.fetch = jest.fn(async (url, options) => (options.headers['x-admin-key'] === 'right-key'
+    ? { ok: true, json: async () => ({ total: 2, hearts: [
+      { id: 'a', name: 'มิว', message: 'ใบแรก', kind: 'wish', color: 2, sticker: 1, pattern: 'dots', font: 'hand', createdAt: Date.UTC(2026, 10, 14, 3, 30) },
+      { id: 'b', name: 'ตูนตูน', message: 'ใบสอง', kind: 'cheer', createdAt: Date.UTC(2026, 10, 14, 4) },
+    ] }) }
+    : { ok: false, status: 401, json: async () => ({ error: 'รหัสแอดมินไม่ถูกต้อง' }) }));
+  try {
+    window.history.pushState({}, '', '/heart/admin');
+    render(<App />);
+    fireEvent.click(await screen.findByRole('button', { name: 'โหลดการ์ดทั้งหมด' }));
+    expect(screen.getByRole('alert')).toHaveTextContent('ใส่รหัสแอดมินก่อนนะ');
+
+    fireEvent.change(screen.getByLabelText('รหัสแอดมิน'), { target: { value: 'wrong' } });
+    fireEvent.click(screen.getByRole('button', { name: 'โหลดการ์ดทั้งหมด' }));
+    expect(await screen.findByText('รหัสแอดมินไม่ถูกต้อง')).toBeInTheDocument();
+    expect(screen.queryByText('ใบแรก')).not.toBeInTheDocument();
+
+    fireEvent.change(screen.getByLabelText('รหัสแอดมิน'), { target: { value: 'right-key' } });
+    fireEvent.click(screen.getByRole('button', { name: 'โหลดการ์ดทั้งหมด' }));
+    expect(await screen.findByText('ใบแรก')).toBeInTheDocument();
+    expect(screen.getByText('ใบสอง')).toBeInTheDocument();
+    expect(screen.getByText(/^ทั้งหมด/)).toHaveTextContent('ทั้งหมด 2 ใบ');
+    expect(screen.getByText(/#1 · 2026-11-14 10:30/)).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'ดาวน์โหลดตาราง CSV' })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'บันทึกการ์ดของ มิว เป็นรูป' })).toBeInTheDocument();
   } finally {
     global.fetch = originalFetch;
   }

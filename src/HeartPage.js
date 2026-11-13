@@ -3,20 +3,32 @@ import './Game.css';
 import React, { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import {
-  NAME_MAX, MESSAGE_MAX, KINDS, COLORS, STICKERS, PATTERNS, FONTS, DEFAULT_DRAFT, CERT_W, CERT_H,
-  countChars, tiltOf, readToken, readDraft, saveDraft, fetchTotal, sendHeart, pickSuggestion, heartSerial, drawHeartCertificate,
+  NAME_MAX, MESSAGE_MAX, KINDS, COLORS, STICKERS, PATTERNS, FONTS, DEFAULT_DRAFT, CARD_W, CARD_H,
+  countChars, tiltOf, readToken, readDraft, saveDraft, fetchTotal, sendHeart, pickSuggestion, drawHeartCard,
 } from './game/hearts';
 import { loadCertificateFonts } from './game/certificate';
 import { readMember } from './game/fanCard';
 import { readName } from './game/leaderboard';
 
-const FILE_NAME = 'heart-to-heart-certificate.png';
+const FILE_NAME = 'heart-to-heart-card.png';
 
 const toBlob = (canvas) => new Promise((resolve) => canvas.toBlob(resolve, 'image/png'));
 const kindLabel = (id) => KINDS.find((kind) => kind.id === id).label;
 
-// การ์ดข้อความ 1 ใบ (ตัวอย่างในฟอร์ม)
-function HeartNote({ heart }) {
+// บันทึกไฟล์ลงเครื่อง (ใช้ทั้งรูปการ์ดและไฟล์ CSV ของแอดมิน)
+export function downloadBlob(blob, fileName) {
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement('a');
+  link.href = url;
+  link.download = fileName;
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
+}
+
+// การ์ดข้อความ 1 ใบ (ตัวอย่างในฟอร์ม และหน้าแอดมิน)
+export function HeartNote({ heart }) {
   const color = COLORS[heart.color];
   return (
     <article
@@ -71,17 +83,19 @@ const initialDraft = () => {
   return { ...DEFAULT_DRAFT, name: (member ? member.name : readName()).slice(0, NAME_MAX) };
 };
 
-// Heart to Heart: เขียนข้อความถึงน้อง → รับเกียรติบัตร หน้านี้แสดงแค่จำนวนคนที่ส่ง ไม่แสดงข้อความของคนอื่น
+// Heart to Heart: เขียนข้อความถึงน้อง แต่งการ์ด ส่งแล้วบันทึกการ์ดเป็นรูปลงเครื่องได้
+// หน้านี้แสดงแค่จำนวนคนที่ส่ง ไม่แสดงข้อความของคนอื่น
 function HeartPage() {
   const canvasRef = useRef(null);
-  const certRef = useRef(null);
+  const cardRef = useRef(null);
+  const justSent = useRef(false);
   const [draft, setDraft] = useState(initialDraft);
   const [myId, setMyId] = useState(() => { const saved = readDraft(); return saved ? saved.id : null; });
   const [total, setTotal] = useState(null); // จำนวนคนที่ส่งใจมาแล้ว (null = ยังไม่รู้ / โหลดไม่ได้ ก็ไม่ต้องแสดง)
   const [sending, setSending] = useState(false);
   const [message, setMessage] = useState('');
-  const [sent, setSent] = useState(null);   // การ์ดที่เพิ่งส่งสำเร็จ → แสดงเกียรติบัตร
-  const [photo, setPhoto] = useState(null); // รูปสำหรับเกียรติบัตรเท่านั้น ไม่ถูกอัปโหลด
+  // การ์ดที่ส่งสำเร็จแล้ว (รวมที่เคยส่งจากเครื่องนี้) → แสดงเป็นรูปให้บันทึกลงเครื่อง
+  const [sent, setSent] = useState(() => { const saved = readDraft(); return saved && saved.id ? saved : null; });
   const [note, setNote] = useState('');
   const [canDraw, setCanDraw] = useState(true);
 
@@ -93,12 +107,14 @@ function HeartPage() {
     return () => { alive = false; };
   }, []);
 
-  // ส่งสำเร็จแล้วเลื่อนขึ้นไปที่เกียรติบัตร (อยู่เหนือฟอร์ม)
+  // ส่งสำเร็จแล้วเลื่อนขึ้นไปที่การ์ด (อยู่เหนือฟอร์ม) เปิดหน้ามาเฉย ๆ ไม่ต้องเลื่อน
   useEffect(() => {
-    if (sent && certRef.current && certRef.current.scrollIntoView) certRef.current.scrollIntoView({ block: 'start' });
+    if (!justSent.current) return;
+    justSent.current = false;
+    if (cardRef.current && cardRef.current.scrollIntoView) cardRef.current.scrollIntoView({ block: 'start' });
   }, [sent]);
 
-  // วาดเกียรติบัตรเมื่อส่งสำเร็จ หรือเปลี่ยนรูป
+  // วาดการ์ดเป็นรูปเมื่อส่งสำเร็จ
   useEffect(() => {
     if (!sent) return undefined;
     const canvas = canvasRef.current;
@@ -108,9 +124,9 @@ function HeartPage() {
       return undefined;
     }
     let alive = true;
-    loadCertificateFonts().then(() => { if (alive) drawHeartCertificate(ctx, sent, photo); });
+    loadCertificateFonts().then(() => { if (alive) drawHeartCard(ctx, sent); });
     return () => { alive = false; };
-  }, [sent, photo]);
+  }, [sent]);
 
   const update = (key) => (value) => {
     setDraft((previous) => ({ ...previous, [key]: value }));
@@ -129,6 +145,7 @@ function HeartPage() {
       setMyId(result.heart.id);
       setDraft({ ...DEFAULT_DRAFT, ...result.heart });
       setTotal(result.total);
+      justSent.current = true;
       setSent(result.heart);
       setNote('');
     } catch (error) {
@@ -138,29 +155,11 @@ function HeartPage() {
     }
   };
 
-  const handlePhoto = (event) => {
-    const file = event.target.files && event.target.files[0];
-    if (!file) return;
-    const url = URL.createObjectURL(file);
-    const image = new Image();
-    image.onload = () => { URL.revokeObjectURL(url); setPhoto(image); setNote(''); };
-    image.onerror = () => { URL.revokeObjectURL(url); setNote('เปิดรูปนี้ไม่ได้ ลองรูปอื่นนะ'); };
-    image.src = url;
-    event.target.value = '';
-  };
-
   const handleSave = async () => {
     const blob = await toBlob(canvasRef.current);
     if (!blob) return;
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement('a');
-    link.href = url;
-    link.download = FILE_NAME;
-    document.body.appendChild(link);
-    link.click();
-    link.remove();
-    setTimeout(() => URL.revokeObjectURL(url), 1000);
-    setNote('บันทึกรูปแล้ว ถ้าใช้มือถือ รูปจะอยู่ในไฟล์ดาวน์โหลด หรือกดค้างที่รูปเพื่อบันทึกลงอัลบั้ม');
+    downloadBlob(blob, FILE_NAME);
+    setNote('บันทึกการ์ดแล้ว ถ้าใช้มือถือ รูปจะอยู่ในไฟล์ดาวน์โหลด หรือกดค้างที่รูปเพื่อบันทึกลงอัลบั้ม');
   };
 
   const handleShare = async () => {
@@ -192,37 +191,29 @@ function HeartPage() {
       </header>
 
       {sent && (
-        <div className="sheet heart-cert" ref={certRef}>
+        <div className="sheet heart-card" ref={cardRef}>
           <span className="tape tape-sky tape-center" aria-hidden="true" />
           <h2 className="quiz-title">ขอบคุณที่ส่งใจถึงน้อง</h2>
-          <p className="heart-lead">นี่คือการ์ดHeart to Heart ของคุณ</p>
+          <p className="heart-lead">นี่คือการ์ดที่คุณส่งถึงน้องการ์ตูน บันทึกเก็บไว้ในเครื่องได้เลย</p>
           {canDraw ? (
             <canvas
               ref={canvasRef}
-              width={CERT_W}
-              height={CERT_H}
-              className="heart-cert-canvas"
+              width={CARD_W}
+              height={CARD_H}
+              className="heart-card-canvas"
               role="img"
-              aria-label={`การ์ด Heart to Heart ของ ${sent.name} เลขที่ ${heartSerial(sent)}`}
+              aria-label={`การ์ด Heart to Heart ของ ${sent.name}: ${sent.message}`}
             />
           ) : (
-            <p className="leaderboard-empty">เครื่องนี้วาดการ์ดไม่ได้ ลองเปิดด้วยเบราว์เซอร์อื่น</p>
+            <p className="leaderboard-empty">เครื่องนี้วาดการ์ดเป็นรูปไม่ได้ ลองเปิดด้วยเบราว์เซอร์อื่น</p>
           )}
           {canDraw && (
-            <>
-              <div className="game-actions">
-                <button type="button" className="game-btn" onClick={handleSave}>บันทึกรูป</button>
-                {canShareFiles && (
-                  <button type="button" className="game-btn game-btn-secondary" onClick={handleShare}>แชร์</button>
-                )}
-              </div>
-              <div className="heart-cert-photo">
-                <label htmlFor="heart-photo">ใส่รูปในการ์ด (ไม่บังคับ)</label>
-                <input id="heart-photo" type="file" accept="image/*" onChange={handlePhoto} />
-                {photo && <button type="button" className="hand-link cert-photo-clear" onClick={() => setPhoto(null)}>เอารูปออก</button>}
-                <p className="fan-card-meta">รูปอยู่ในเครื่องของคุณเท่านั้น ไม่ถูกส่งไปที่ไหน</p>
-              </div>
-            </>
+            <div className="game-actions">
+              <button type="button" className="game-btn" onClick={handleSave}>บันทึกการ์ด</button>
+              {canShareFiles && (
+                <button type="button" className="game-btn game-btn-secondary" onClick={handleShare}>แชร์</button>
+              )}
+            </div>
           )}
           {note && <p className="fan-card-meta" role="status">{note}</p>}
         </div>

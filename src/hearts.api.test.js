@@ -1,7 +1,8 @@
 // เทสต์ Vercel Function ใน api/hearts.js โดยจำลอง Upstash Redis REST ด้วย fetch ปลอม
 const handler = require('../api/hearts');
 
-const { cleanText, heartId, NAME_MAX, MESSAGE_MAX } = handler;
+const { cleanText, heartId, NAME_MAX, MESSAGE_MAX, LABELS } = handler;
+const client = require('./game/hearts');
 
 const TOKEN_A = 'aaaaaaaa-1111-2222-3333-444444444444';
 const TOKEN_B = 'bbbbbbbb-1111-2222-3333-444444444444';
@@ -32,10 +33,8 @@ function fakeRedis() {
         if (!(member in order)) order[member] = score;
         return 1;
       }
-      case 'ZRANGE': { // [start, stop, 'REV']
-        const [start, stop] = args;
-        return Object.entries(order).sort((a, b) => b[1] - a[1]).slice(start, stop + 1).map(([member]) => member);
-      }
+      case 'ZRANGE': return Object.entries(order).sort((a, b) => a[1] - b[1]).map(([member]) => member); // [0, -1]
+      case 'HGETALL': return Object.entries(data).flat(); // Upstash REST คืนเป็น [field, value, field, value, …]
       default: throw new Error(`ไม่รองรับ ${cmd}`);
     }
   };
@@ -65,6 +64,7 @@ beforeEach(() => {
 afterEach(() => {
   delete process.env.KV_REST_API_URL;
   delete process.env.KV_REST_API_TOKEN;
+  delete process.env.HEARTS_ADMIN_KEY;
   delete global.fetch;
   jest.restoreAllMocks();
 });
@@ -137,4 +137,63 @@ test('ส่งเกิน 5 ครั้งต่อนาทีจาก IP �
 test('ยังไม่ได้เชื่อม Redis ได้ 503 แทนที่จะพัง', async () => {
   delete process.env.KV_REST_API_URL;
   expect((await call({ method: 'GET' })).statusCode).toBe(503);
+});
+
+test('การ์ดที่เก็บอ่านง่าย: ขึ้นต้นด้วยเวลาไทย ชื่อ ประเภท ข้อความ และสรุปการแต่งการ์ด', async () => {
+  Date.now.mockImplementation(() => Date.UTC(2026, 10, 14, 3, 30));
+  await post({ token: TOKEN_A, name: 'มิว', message: 'สู้ ๆ นะ', kind: 'cheer', color: 0, sticker: 0, pattern: 'stripe', font: 'hand' });
+  const stored = JSON.parse(JSON.parse(global.fetch.mock.calls[1][1].body)[0][3]);
+  expect(Object.keys(stored).slice(0, 5)).toEqual(['sentAt', 'name', 'type', 'message', 'design']);
+  expect(stored).toMatchObject({
+    sentAt: '2026-11-14 10:30',
+    name: 'มิว',
+    type: 'ให้กำลังใจ',
+    message: 'สู้ ๆ นะ',
+    design: 'สีชมพู · 💖 · พื้นลายทาง · ตัวอักษรลายมือ',
+    kind: 'cheer', color: 0, sticker: 0, pattern: 'stripe', font: 'hand',
+  });
+  expect(stored.editedAt).toBeUndefined();
+
+  Date.now.mockImplementation(() => Date.UTC(2026, 10, 14, 5));
+  const edited = await post({ token: TOKEN_A, name: 'มิว', message: 'แก้แล้ว' });
+  expect(edited.body.heart).toMatchObject({ sentAt: '2026-11-14 10:30', editedAt: '2026-11-14 12:00' });
+});
+
+test('ตัวเลือกและคำสรุปการ์ดฝั่ง api ตรงกับฝั่งหน้าเว็บ', () => {
+  expect(LABELS.KIND_LABELS).toEqual(Object.fromEntries(client.KINDS.map((kind) => [kind.id, kind.label])));
+  expect(LABELS.COLOR_LABELS).toEqual(client.COLORS.map((color) => color.label));
+  expect(LABELS.STICKERS).toEqual(client.STICKERS);
+  expect(LABELS.PATTERN_LABELS).toEqual(Object.fromEntries(client.PATTERNS.map((pattern) => [pattern.id, pattern.label])));
+  expect(LABELS.FONT_LABELS).toEqual(Object.fromEntries(client.FONTS.map((font) => [font.id, font.label])));
+  const design = { color: 3, sticker: 5, pattern: 'grid', font: 'display' };
+  expect(handler.describeDesign(design)).toBe(client.describeDesign(design));
+  expect(handler.thaiTime(123456789)).toBe(client.thaiTime(123456789));
+});
+
+test('แอดมิน: ใส่รหัสถูกได้การ์ดทั้งหมดเรียงตามเวลาที่ส่ง รหัสผิดหรือยังไม่ตั้งรหัสไม่ได้อะไร', async () => {
+  await post({ token: TOKEN_A, name: 'มิว', message: 'ใบแรก' });
+  await post({ token: TOKEN_B, name: 'ตูนตูน', message: 'ใบสอง', kind: 'cheer' }, '5.6.7.8');
+  const admin = (key) => call({ method: 'GET', headers: { 'x-forwarded-for': '9.9.9.9', 'x-admin-key': key } });
+
+  expect((await admin('anything')).statusCode).toBe(503);
+
+  process.env.HEARTS_ADMIN_KEY = 'open-sesame-123';
+  const wrong = await admin('guess');
+  expect(wrong.statusCode).toBe(401);
+  expect(JSON.stringify(wrong.body)).not.toContain('ใบแรก');
+  expect((await admin('')).statusCode).toBe(401);
+
+  const ok = await admin('open-sesame-123');
+  expect(ok.statusCode).toBe(200);
+  expect(ok.body.total).toBe(2);
+  expect(ok.body.hearts.map((heart) => heart.message)).toEqual(['ใบแรก', 'ใบสอง']);
+  expect(ok.body.hearts[1]).toMatchObject({ name: 'ตูนตูน', type: 'ให้กำลังใจ', design: 'สีชมพู · 💖 · พื้นเรียบ · ตัวอักษรปกติ' });
+  expect(JSON.stringify(ok.body)).not.toContain(TOKEN_A);
+});
+
+test('แอดมิน: ลองรหัสเกิน 10 ครั้งต่อนาทีจาก IP เดียวกันได้ 429', async () => {
+  process.env.HEARTS_ADMIN_KEY = 'open-sesame-123';
+  const admin = (key) => call({ method: 'GET', headers: { 'x-forwarded-for': '9.9.9.9', 'x-admin-key': key } });
+  for (let i = 0; i < 10; i += 1) expect((await admin(`guess-${i}`)).statusCode).toBe(401);
+  expect((await admin('open-sesame-123')).statusCode).toBe(429);
 });
