@@ -12,6 +12,7 @@ import QuizGame from './QuizGame';
 import FanCardMaker from './FanCardMaker';
 import CertificateMaker from './CertificateMaker';
 import HeartPage from './HeartPage';
+import HeartAdmin from './HeartAdmin';
 import WishPage from './WishPage';
 import Footer from './Footer';
 
@@ -47,6 +48,7 @@ function App() {
             <Route path="/game/certificate" element={<CertificateMaker />} />
             <Route path="/wish" element={<WishPage />} />
             <Route path="/heart" element={<HeartPage />} />
+            <Route path="/heart/admin" element={<HeartAdmin />} />
             {/* หน้าเดิมที่ถูกรวมเข้าหน้าหลักและ footer แล้ว เก็บไว้ไม่ให้ลิงก์เก่าเสีย */}
             <Route path="/artist" element={<Navigate to="/" replace />} />
             <Route path="/contact" element={<Navigate to="/" replace />} />

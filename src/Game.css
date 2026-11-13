@@ -1068,12 +1068,12 @@
 }
 
 .heart-form,
-.heart-cert {
+.heart-card {
   padding: 26px 22px 18px;
 }
 
 .heart-form .quiz-title,
-.heart-cert .quiz-title {
+.heart-card .quiz-title {
   text-align: center;
 }
 
@@ -1235,7 +1235,7 @@
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='34' height='34'%3E%3Cpath d='M17 26s-8-5-8-10a4 4 0 0 1 8-1 4 4 0 0 1 8 1c0 5-8 10-8 10z' fill='white' fill-opacity='.55'/%3E%3C/svg%3E");
 }
 
-.heart-cert {
+.heart-card {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -1243,14 +1243,14 @@
   scroll-margin-top: 16px;
 }
 
-.heart-cert .heart-lead,
-.heart-cert .fan-card-meta {
+.heart-card .heart-lead,
+.heart-card .fan-card-meta {
   margin: 0;
   text-align: center;
 }
 
 /* ภาพจริง 1080 × 1350 ย่อแสดงในหน้า */
-.heart-cert-canvas {
+.heart-card-canvas {
   display: block;
   width: min(400px, 100%);
   height: auto;
@@ -1259,23 +1259,59 @@
   box-shadow: 0 6px 18px rgba(34, 48, 90, 0.14);
 }
 
-.heart-cert-photo {
+/* หน้าแอดมิน: รวบรวมการ์ดทั้งหมด */
+.heart-admin-form {
   display: flex;
-  flex-direction: column;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 12px;
+}
+
+.heart-admin-form .cert-field {
+  flex: 1 1 220px;
+  margin: 0;
+}
+
+.heart-admin-bar {
+  display: flex;
+  flex-wrap: wrap;
   align-items: center;
-  gap: 6px;
-  max-width: 100%;
+  justify-content: space-between;
+  gap: 12px;
+  margin: 22px 0 8px;
 }
 
-.heart-cert-photo label {
-  font-family: var(--hand);
-  font-weight: 600;
+.heart-admin-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 26px 18px;
+  margin-top: 22px;
+  padding: 0;
+  list-style: none;
 }
 
-.heart-cert-photo input {
-  max-width: 100%;
-  font: inherit;
+.heart-admin-item .heart-note {
+  margin-bottom: 8px;
+}
+
+.heart-admin-meta {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 4px 10px;
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--ink);
+  opacity: 0.75;
+}
+
+.heart-admin-meta button {
+  padding: 0;
+  border: 0;
+  background: none;
   font-size: 14px;
+  cursor: pointer;
 }
 
 /* จอกว้าง: ฟอร์มซ้าย ตัวอย่างการ์ดขวา */

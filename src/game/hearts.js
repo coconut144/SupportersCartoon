@@ -1,8 +1,9 @@
-// Heart to Heart: เขียนคำอวยพร/กำลังใจถึงน้องการ์ตูน แล้วรับเกียรติบัตร หน้าเว็บแสดงแค่จำนวนคนที่ส่ง
+// Heart to Heart: เขียนคำอวยพร/กำลังใจถึงน้องการ์ตูน แต่งการ์ด แล้วบันทึกการ์ดเป็นรูปลงเครื่องได้
+// หน้าเว็บแสดงแค่จำนวนคนที่ส่ง แอดมินรวบรวมการ์ดทั้งหมดได้ที่ /heart/admin
 // คุยกับ /api/hearts (ดู api/hearts.js) ตัวเลือกการ์ดด้านล่างต้องตรงกับฝั่ง api
 
 import {
-  HEAD, BODY, HAND, SIGNER, setFont, fitText, roundRect, heart, wrapLines,
+  HEAD, BODY, HAND, setFont, fitText, roundRect, heart, wrapLines,
 } from './certificate';
 
 const ENDPOINT = '/api/hearts';
@@ -96,6 +97,23 @@ export function normalizeHeart(raw) {
 
 export const countChars = (text) => [...text].length;
 
+// สรุปการแต่งการ์ดเป็นข้อความ เช่น "สีชมพู · 💖 · พื้นลายทาง · ตัวอักษรลายมือ" (ต้องตรงกับ describeDesign ใน api/hearts.js)
+export function describeDesign(raw) {
+  const h = normalizeHeart(raw);
+  return [
+    `สี${COLORS[h.color].label}`,
+    STICKERS[h.sticker],
+    `พื้น${PATTERNS.find((item) => item.id === h.pattern).label}`,
+    `ตัวอักษร${FONTS.find((item) => item.id === h.font).label}`,
+  ].join(' · ');
+}
+
+// เวลาไทยแบบ 2026-11-14 10:30 (เรียงในตารางได้)
+export function thaiTime(ms) {
+  if (!Number.isFinite(ms)) return '';
+  return new Date(ms + 7 * 3600 * 1000).toISOString().slice(0, 16).replace('T', ' ');
+}
+
 // ================== ข้อมูลในเครื่อง ==================
 
 function randomToken() {
@@ -166,10 +184,46 @@ export async function sendHeart(token, draft) {
   return { heart: normalizeHeart(data.heart), total: toTotal(data) };
 }
 
-// ================== เกียรติบัตร Heart to Heart ==================
+// ================== แอดมิน: รวบรวมการ์ดทั้งหมด ==================
 
-export const CERT_W = 1080;
-export const CERT_H = 1350;
+// key = รหัสแอดมิน (HEARTS_ADMIN_KEY ที่ตั้งไว้ใน Vercel) ส่งใน header ไม่อยู่ใน URL
+export async function fetchAllHearts(key) {
+  const data = await request(ENDPOINT, { headers: { 'x-admin-key': key } });
+  return (Array.isArray(data.hearts) ? data.hearts : []).map(normalizeHeart);
+}
+
+const CSV_COLUMNS = [
+  ['ลำดับ', (h, index) => index + 1],
+  ['ส่งเมื่อ (เวลาไทย)', (h) => thaiTime(h.createdAt)],
+  ['ชื่อ', (h) => h.name],
+  ['ประเภท', (h) => KINDS.find((kind) => kind.id === h.kind).label],
+  ['ข้อความ', (h) => h.message],
+  ['การ์ด', (h) => describeDesign(h)],
+  ['แก้ล่าสุด (เวลาไทย)', (h) => thaiTime(h.updatedAt)],
+  ['id', (h) => h.id || ''],
+];
+
+// ขึ้นต้นด้วย = + - @ ใส่ ' นำหน้า กันโปรแกรมตารางตีความเป็นสูตร
+const csvCell = (value) => {
+  let text = String(value);
+  if (/^[=+\-@]/.test(text)) text = `'${text}`;
+  return `"${text.replace(/"/g, '""')}"`;
+};
+
+// ตาราง CSV เปิดใน Excel / Google Sheets ได้ (ตอนบันทึกไฟล์ใส่ BOM นำหน้าให้ภาษาไทยไม่เพี้ยน)
+export function heartsToCsv(hearts) {
+  const rows = [CSV_COLUMNS.map(([title]) => csvCell(title))];
+  hearts.forEach((raw, index) => {
+    const h = normalizeHeart(raw);
+    rows.push(CSV_COLUMNS.map(([, read]) => csvCell(read(h, index))));
+  });
+  return rows.map((row) => row.join(',')).join('\r\n');
+}
+
+// ================== การ์ดเป็นรูป ==================
+
+export const CARD_W = 1080;
+export const CARD_H = 1350;
 
 const hash = (text) => {
   let h = 0;
@@ -179,12 +233,6 @@ const hash = (text) => {
 
 // มุมเอียงเล็กน้อยของการ์ด คงที่ตาม id
 export const tiltOf = (id) => ((hash(id || 'preview') % 5) - 2) * 0.6;
-
-export function heartSerial(heartData) {
-  const year = new Date(heartData.createdAt || Date.now()).getFullYear();
-  const code = hash(heartData.name + heartData.message).toString(36).toUpperCase().padStart(6, '0').slice(-6);
-  return `HTH-${year}-${code}`;
-}
 
 // ตัดบรรทัดข้อความที่ผู้ใช้ขึ้นบรรทัดใหม่เองได้
 export function wrapMessage(text, measure, maxWidth, maxLines) {
@@ -198,129 +246,116 @@ export function wrapMessage(text, measure, maxWidth, maxLines) {
   return lines;
 }
 
-const CERT_FONT = { sans: [400, 30, BODY], hand: [600, 31, HAND], display: [500, 30, HEAD] };
+const CARD_FONT = { sans: [400, BODY], hand: [600, HAND], display: [500, HEAD] };
 
-// photo (ไม่บังคับ) = รูปที่ผู้ใช้เลือกในเครื่อง ใช้กับเกียรติบัตรเท่านั้น ไม่ถูกส่งขึ้น server
-export function drawHeartCertificate(ctx, raw, photo = null) {
+// ลายพื้นการ์ด ให้เหมือนลายใน Game.css (.heart-pt-*)
+function drawPattern(ctx, pattern, x, y, w, h) {
+  if (pattern === 'dots') {
+    ctx.fillStyle = 'rgba(255, 255, 255, 0.75)';
+    for (let py = y + 24; py < y + h; py += 48) {
+      for (let px = x + 24; px < x + w; px += 48) {
+        ctx.beginPath();
+        ctx.arc(px, py, 7, 0, Math.PI * 2);
+        ctx.fill();
+      }
+    }
+  } else if (pattern === 'stripe') {
+    ctx.strokeStyle = 'rgba(255, 255, 255, 0.5)';
+    ctx.lineWidth = 24;
+    for (let offset = -h; offset < w; offset += 76) {
+      ctx.beginPath();
+      ctx.moveTo(x + offset, y + h);
+      ctx.lineTo(x + offset + h, y);
+      ctx.stroke();
+    }
+  } else if (pattern === 'grid') {
+    ctx.strokeStyle = 'rgba(0, 0, 0, 0.06)';
+    ctx.lineWidth = 3;
+    ctx.beginPath();
+    for (let px = x + 54; px < x + w; px += 54) { ctx.moveTo(px, y); ctx.lineTo(px, y + h); }
+    for (let py = y + 54; py < y + h; py += 54) { ctx.moveTo(x, py); ctx.lineTo(x + w, py); }
+    ctx.stroke();
+  } else if (pattern === 'hearts') {
+    for (let py = y + 50; py < y + h; py += 100) {
+      for (let px = x + 50; px < x + w; px += 100) heart(ctx, px, py - 22, 44, 'rgba(255, 255, 255, 0.55)');
+    }
+  }
+}
+
+// วาดการ์ดที่แฟนคลับแต่งไว้เป็นรูป (สี ลาย สติกเกอร์ ตัวอักษร ตามที่เลือก) ใช้ทั้งหน้าคนส่งและหน้าแอดมิน
+export function drawHeartCard(ctx, raw) {
   const w = normalizeHeart(raw);
-  const W = CERT_W;
-  const H = CERT_H;
-  const cx = W / 2;
-  const pink = '#e46b86';
-  const ink = '#4a3340';
-  const soft = '#9b7a86';
+  const W = CARD_W;
+  const H = CARD_H;
+  const color = COLORS[w.color];
+  const x = 90;
+  const y = 150;
+  const cw = W - 180;
+  const ch = 1000;
   ctx.save();
   ctx.textBaseline = 'alphabetic';
 
-  const bg = ctx.createLinearGradient(0, 0, W, H);
-  bg.addColorStop(0, '#ffd9e2');
-  bg.addColorStop(0.55, '#fff0e0');
-  bg.addColorStop(1, '#e4ecff');
-  ctx.fillStyle = bg;
+  ctx.fillStyle = '#fffaf5';
   ctx.fillRect(0, 0, W, H);
-  // หัวใจพื้นหลัง: สุ่มด้วย seed จากชื่อ แต่ละคนได้ลายไม่เหมือนกัน
-  let seed = (hash(w.name) % 233280) + 3;
-  const rnd = () => {
-    seed = (seed * 9301 + 49297) % 233280;
-    return seed / 233280;
-  };
-  for (let i = 0; i < 36; i += 1) heart(ctx, rnd() * W, rnd() * H, 14 + rnd() * 30, `rgba(228, 107, 134, ${0.12 + rnd() * 0.25})`);
 
+  // ตัวการ์ด
   ctx.save();
-  ctx.shadowColor = 'rgba(200, 110, 130, 0.25)';
+  ctx.shadowColor = 'rgba(34, 48, 90, 0.18)';
   ctx.shadowBlur = 40;
-  ctx.fillStyle = 'rgba(255, 255, 255, 0.92)';
-  roundRect(ctx, 70, 70, W - 140, H - 140, 44);
+  ctx.shadowOffsetY = 12;
+  ctx.fillStyle = color.bg;
+  roundRect(ctx, x, y, cw, ch, 44);
   ctx.fill();
   ctx.restore();
-  ctx.setLineDash([12, 10]);
-  ctx.strokeStyle = '#f2a5b5';
-  ctx.lineWidth = 3;
-  roundRect(ctx, 90, 90, W - 180, H - 180, 32);
-  ctx.stroke();
-  ctx.setLineDash([]);
+  ctx.save();
+  roundRect(ctx, x, y, cw, ch, 44);
+  ctx.clip();
+  drawPattern(ctx, w.pattern, x, y, cw, ch);
+  ctx.restore();
 
   ctx.textAlign = 'center';
-  ctx.fillStyle = pink;
-  setFont(ctx, 500, 26, HEAD);
-  ctx.fillText('H E A R T   T O   H E A R T', cx, 200);
-  heart(ctx, cx, 230, 70, pink);
-  ctx.fillStyle = ink;
-  setFont(ctx, 600, 68, HEAD);
-  ctx.fillText('เกียรติบัตร', cx, 390);
-  ctx.fillStyle = soft;
-  setFont(ctx, 400, 28, BODY);
-  ctx.fillText('ขอบคุณที่ร่วมส่งใจถึงน้องการ์ตูน มอบให้แก่', cx, 450);
-  ctx.fillStyle = pink;
-  fitText(ctx, w.name, cx, 560, W * 0.7, 72, 600, HAND);
-  ctx.strokeStyle = '#f2a5b5';
-  ctx.lineWidth = 2;
-  ctx.beginPath();
-  ctx.moveTo(cx - 260, 596);
-  ctx.lineTo(cx + 260, 596);
-  ctx.stroke();
-  const kind = KINDS.find((item) => item.id === w.kind);
-  ctx.fillStyle = ink;
-  fitText(ctx, `ผู้ร่วมกิจกรรม Heart to Heart · ${kind.done}`, cx, 656, W * 0.74, 30, 500, HEAD);
+  ctx.font = '120px sans-serif';
+  ctx.fillText(STICKERS[w.sticker], x + cw - 110, y + 60);
 
-  // กล่องข้อความที่เขียน ใช้สีเดียวกับการ์ดที่แต่งไว้
-  const color = COLORS[w.color];
-  const boxX = 150;
-  const boxY = 700;
-  const boxW = W - 300;
-  const boxH = 330;
-  ctx.fillStyle = color.bg;
-  roundRect(ctx, boxX, boxY, boxW, boxH, 28);
-  ctx.fill();
-  ctx.font = '48px sans-serif';
-  ctx.textAlign = 'center';
-  ctx.fillText(STICKERS[w.sticker], boxX + boxW - 40, boxY + 35);
-
-  let textX = cx;
-  let textW = boxW - 80;
-  if (photo && photo.width && photo.height) {
-    // รูปแบบโพลารอยด์เอียง ๆ ทางซ้ายของกล่อง มีเทปแปะด้านบน
-    const S = 250;
-    const px = boxX + 40 + S / 2;
-    const py = boxY + 150;
-    ctx.save();
-    ctx.translate(px, py);
-    ctx.rotate(-0.06);
-    ctx.shadowColor = 'rgba(0, 0, 0, 0.18)';
-    ctx.shadowBlur = 18;
-    ctx.fillStyle = '#fff';
-    ctx.fillRect(-S / 2 - 12, -S / 2 - 12, S + 24, S + 56);
-    ctx.shadowBlur = 0;
-    const scale = Math.max(S / photo.width, S / photo.height);
-    ctx.beginPath();
-    ctx.rect(-S / 2, -S / 2, S, S);
-    ctx.clip();
-    ctx.drawImage(photo, (-photo.width * scale) / 2, (-photo.height * scale) / 2, photo.width * scale, photo.height * scale);
-    ctx.restore();
-    ctx.save();
-    ctx.translate(px, py - S / 2 - 16);
-    ctx.rotate(-0.12);
-    ctx.fillStyle = 'rgba(255, 214, 140, 0.8)';
-    ctx.fillRect(-45, -12, 90, 24);
-    ctx.restore();
-    const left = boxX + 40 + S + 40;
-    const right = boxX + boxW - 30;
-    textX = (left + right) / 2;
-    textW = right - left - 20;
-  }
-  const [weight, size, family] = CERT_FONT[w.font];
+  ctx.textAlign = 'left';
   ctx.fillStyle = color.ink;
-  setFont(ctx, weight, size, family);
-  ctx.textAlign = 'center';
-  const lineHeight = 46;
-  const lines = wrapMessage(`“${w.message}”`, (value) => ctx.measureText(value).width, textW, 6);
-  const top = boxY + (boxH - lines.length * lineHeight) / 2 + 32;
-  lines.forEach((line, index) => ctx.fillText(line, textX, top + index * lineHeight));
+  ctx.globalAlpha = 0.8;
+  setFont(ctx, 500, 30, HEAD);
+  ctx.fillText(KINDS.find((item) => item.id === w.kind).label, x + 70, y + 110);
+  ctx.globalAlpha = 1;
 
+  // ข้อความ: ลดขนาดตัวอักษรจนพอดีกล่อง
+  const [weight, family] = CARD_FONT[w.font];
+  const textW = cw - 140;
+  const textTop = y + 170;
+  const textH = ch - 170 - 190;
+  const measure = (value) => ctx.measureText(value).width;
+  let size = 64;
+  let lines = [];
+  for (; size >= 30; size -= 4) {
+    setFont(ctx, weight, size, family);
+    const maxLines = Math.floor(textH / (size * 1.6));
+    lines = wrapMessage(w.message, measure, textW, maxLines + 1);
+    if (lines.length <= maxLines) break;
+  }
+  if (size < 30) {
+    size = 30;
+    setFont(ctx, weight, size, family);
+    lines = wrapMessage(w.message, measure, textW, Math.floor(textH / (size * 1.6)));
+  }
+  const lineHeight = size * 1.6;
+  const top = textTop + (textH - lines.length * lineHeight) / 2 + size;
+  lines.forEach((line, index) => ctx.fillText(line, x + 70, top + index * lineHeight));
+
+  fitText(ctx, `— ${w.name || 'แฟนคลับน้องการ์ตูน'}`, x + 70, y + ch - 80, textW, 46, 600, HAND, 'left');
+
+  // ท้ายรูป
+  ctx.textAlign = 'center';
+  ctx.fillStyle = '#e46b86';
+  setFont(ctx, 500, 26, HEAD);
+  ctx.fillText('H E A R T   T O   H E A R T', W / 2, 96);
+  ctx.fillStyle = '#9b7a86';
   const date = new Date(w.createdAt || Date.now()).toLocaleDateString('th-TH', { day: 'numeric', month: 'long', year: 'numeric' });
-  ctx.fillStyle = ink;
-  fitText(ctx, `${date}  ·  ${SIGNER}`, cx, 1130, W * 0.76, 26, 400, BODY);
-  ctx.fillStyle = soft;
-  fitText(ctx, `เลขที่ ${heartSerial(w)}`, cx, 1190, W * 0.76, 20, 400, BODY);
+  fitText(ctx, `ส่งใจถึงน้องการ์ตูน  ·  ${date}`, W / 2, y + ch + 100, W * 0.8, 28, 400, BODY);
   ctx.restore();
 }

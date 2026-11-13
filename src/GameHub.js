@@ -41,7 +41,7 @@ const games = [
   {
     path: '/heart',
     title: 'Heart to Heart',
-    description: 'เขียนคำอวยพรหรือกำลังใจถึงน้อง แล้วรับเกียรติบัตร Heart to Heart',
+    description: 'เขียนคำอวยพรหรือกำลังใจถึงน้อง',
     play: 'ส่งใจเลย →',
   },
 ];

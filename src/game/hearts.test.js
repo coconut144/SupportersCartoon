@@ -1,5 +1,6 @@
 import {
-  DEFAULT_DRAFT, normalizeHeart, readToken, readDraft, saveDraft, heartSerial, wrapMessage, tiltOf, fetchTotal, sendHeart, SUGGESTIONS, pickSuggestion, MESSAGE_MAX,
+  DEFAULT_DRAFT, normalizeHeart, readToken, readDraft, saveDraft, wrapMessage, tiltOf, fetchTotal, sendHeart, SUGGESTIONS, pickSuggestion, MESSAGE_MAX,
+  describeDesign, thaiTime, fetchAllHearts, heartsToCsv,
 } from './hearts';
 
 const measure = (text) => [...text].length * 10;
@@ -29,11 +30,34 @@ test('จำการ์ดที่ส่งล่าสุดไว้ใน�
   expect(readDraft()).toBeNull();
 });
 
-test('เลขที่เกียรติบัตร: ข้อมูลเดิมได้เลขเดิม', () => {
-  const heart = { name: 'มิว', message: 'สู้ ๆ', createdAt: Date.UTC(2026, 10, 12, 5) };
-  expect(heartSerial(heart)).toMatch(/^HTH-2026-[0-9A-Z]{6}$/);
-  expect(heartSerial({ ...heart })).toBe(heartSerial(heart));
-  expect(heartSerial({ ...heart, message: 'รักน้อง' })).not.toBe(heartSerial(heart));
+test('สรุปการแต่งการ์ดและเวลาไทยเป็นข้อความที่อ่านง่าย', () => {
+  expect(describeDesign({ color: 0, sticker: 0, pattern: 'stripe', font: 'hand' })).toBe('สีชมพู · 💖 · พื้นลายทาง · ตัวอักษรลายมือ');
+  expect(thaiTime(Date.UTC(2026, 10, 14, 3, 30))).toBe('2026-11-14 10:30');
+  expect(thaiTime(undefined)).toBe('');
+});
+
+test('แอดมิน: โหลดการ์ดทั้งหมดด้วยรหัสใน header ไม่ใส่ใน URL', async () => {
+  global.fetch = jest.fn(async () => ({ ok: true, json: async () => ({ total: 1, hearts: [{ id: 'a', name: 'มิว', message: 'สู้ ๆ', color: 99 }] }) }));
+  const hearts = await fetchAllHearts('secret-key');
+  expect(hearts).toEqual([expect.objectContaining({ id: 'a', name: 'มิว', color: 0, kind: 'wish' })]);
+  const [url, options] = global.fetch.mock.calls[0];
+  expect(url).toBe('/api/hearts');
+  expect(options.headers['x-admin-key']).toBe('secret-key');
+
+  global.fetch = jest.fn(async () => ({ ok: false, status: 401, json: async () => ({ error: 'รหัสแอดมินไม่ถูกต้อง' }) }));
+  await expect(fetchAllHearts('wrong')).rejects.toThrow('รหัสแอดมินไม่ถูกต้อง');
+});
+
+test('ตาราง CSV: มีหัวตาราง ครอบเครื่องหมายคำพูด และกันสูตรของโปรแกรมตาราง', () => {
+  const csv = heartsToCsv([
+    { id: 'a', name: 'มิว', message: 'สู้ ๆ "นะ"\nรักน้อง', kind: 'cheer', color: 2, sticker: 1, pattern: 'dots', font: 'sans', createdAt: Date.UTC(2026, 10, 14, 3, 30) },
+    { id: 'b', name: '=HYPERLINK("x")', message: 'ดี', createdAt: Date.UTC(2026, 10, 14, 4) },
+  ]);
+  const rows = csv.split('\r\n');
+  expect(rows).toHaveLength(3); // ขึ้นบรรทัดใหม่ในข้อความใช้ \n จึงไม่ถูกนับเป็นแถว
+  expect(rows[0]).toBe('"ลำดับ","ส่งเมื่อ (เวลาไทย)","ชื่อ","ประเภท","ข้อความ","การ์ด","แก้ล่าสุด (เวลาไทย)","id"');
+  expect(rows[1]).toBe('"1","2026-11-14 10:30","มิว","ให้กำลังใจ","สู้ ๆ ""นะ""\nรักน้อง","สีฟ้า · 🌷 · พื้นจุด · ตัวอักษรปกติ","","a"');
+  expect(rows[2]).toContain('"\'=HYPERLINK(""x"")"');
 });
 
 test('ข้อความหลายบรรทัด: เก็บการขึ้นบรรทัดของผู้เขียน และตัดเมื่อเกินจำนวนบรรทัด', () => {
